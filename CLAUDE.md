@@ -1,6 +1,6 @@
-# Music Management Workspace
+# Conductor
 
-This is the orchestration workspace for the music-management app. It contains:
+This is the orchestration workspace for the Orchestra app. It contains:
 
 - `main/` — the primary repository (Tauri v2 app: Rust backend + Svelte 5 frontend)
 - `feat-<slug>/` or `fix-<slug>/` — git worktrees for feature and fix branches
