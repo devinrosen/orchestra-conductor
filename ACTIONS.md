@@ -213,11 +213,11 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T06-51/planner-duplicate-detection.md`
   - Category: `convention`
 
-- [ ] **Add selective page filtering to `/ui-test` Playwright test** — The skill advertises `/ui-test library` for testing specific pages, but the Playwright test (`main/e2e/ui-screenshots.spec.ts`) always screenshots all 6 pages. Add support for a `PAGES` environment variable or test parameter so the skill can run `PAGES=library,settings npx playwright test` to test only requested pages.
+- [x] **Add selective page filtering to `/ui-test` Playwright test** — The skill advertises `/ui-test library` for testing specific pages, but the Playwright test (`main/e2e/ui-screenshots.spec.ts`) always screenshots all 6 pages. Add support for a `PAGES` environment variable or test parameter so the skill can run `PAGES=library,settings npx playwright test` to test only requested pages.
   - Source: `postmortems/2026-02-14-ui-test-playwright.md`
   - Category: `skill-update`
 
-- [ ] **Document: update `main/e2e/tauri-mocks.ts` when adding new IPC commands** — The Tauri IPC mock must be updated whenever a new `invoke()` command is added to the app, otherwise the corresponding page will show error/empty state during UI tests. The mock already logs `console.warn("[tauri-mock] unhandled command:")` for unhandled calls. Add a reminder to `main/CLAUDE.md` conventions or the IPC pattern section.
+- [x] **Document: update `main/e2e/tauri-mocks.ts` when adding new IPC commands** — The Tauri IPC mock must be updated whenever a new `invoke()` command is added to the app, otherwise the corresponding page will show error/empty state during UI tests. The mock already logs `console.warn("[tauri-mock] unhandled command:")` for unhandled calls. Add a reminder to `main/CLAUDE.md` conventions or the IPC pattern section.
   - Source: `postmortems/2026-02-14-ui-test-playwright.md`
   - Category: `documentation`
 
