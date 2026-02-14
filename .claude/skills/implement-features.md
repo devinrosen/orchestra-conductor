@@ -15,12 +15,13 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
 ### Phase 1: Setup
 
 1. Read `main/docs/FEATURES.md` and match requested features
-2. Create a team (e.g., `feature-impl-YYYY-MM-DD`)
-3. For each feature, create a git worktree:
+2. Read `ACTIONS.md` and check for pending project-level actions (items under `## Project` that are unchecked). If any exist, surface them to the user and ask if they want to bundle any into this session as additional work items.
+3. Create a team (e.g., `feature-impl-YYYY-MM-DD`)
+4. For each feature, create a git worktree:
    ```bash
    cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
    ```
-4. Create a session postmortem directory: `postmortems/YYYY-MM-DD-<team-name>/`
+5. Create a session postmortem directory: `postmortems/YYYY-MM-DD-<team-name>/`
 
 ### Phase 2: Planning
 
