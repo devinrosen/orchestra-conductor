@@ -52,6 +52,11 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-13T21-39/impl-library-stats.md`
   - Category: `workflow`
 
+- [x] **Pre-check ACTIONS.md cleanup items against codebase before spawning planners** — In the 2026-02-13T23-39 session, 4 of 7 cleanup items were already resolved, wasting planner research time. Before creating a cleanup worktree, run a quick automated grep pass against ACTIONS.md project items to mark stale ones as resolved. This could be a lead responsibility or a pre-flight step in the `/implement-features` skill.
+  - Source: `postmortems/2026-02-13T23-39/planner-project-cleanup.md`
+  - Source: `postmortems/2026-02-13T23-39/lead.md`
+  - Category: `workflow`
+
 - [ ] **Allow combined plan+implement for small cleanup bundles** — For well-scoped mechanical tasks (dead code removal, import cleanup), the planning research is 90% of the implementation work. Consider a fast-track mode in `/implement-features` where a single agent plans and implements small cleanup bundles in one pass instead of requiring separate planner and implementer phases.
   - Source: `postmortems/2026-02-13T22-09/lead.md`
   - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
@@ -92,12 +97,12 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13-full-session.md`
   - Category: `documentation`
 
-- [ ] **Remove dead code: `get_tracks_by_artists` function** — The `get_tracks_by_artists` function in the device repo was replaced by `get_tracks_for_device` (which handles both artist and album selections). The old function is now unused and triggers a compiler warning. Remove it.
+- [x] **Remove dead code: `get_tracks_by_artists` function** — The `get_tracks_by_artists` function in the device repo was replaced by `get_tracks_for_device` (which handles both artist and album selections). The old function is now unused and triggers a compiler warning. Remove it. _(Verified already removed from codebase — 2026-02-13T23-39 session)_
   - Source: `postmortems/2026-02-13-sync-by-album/impl-sync-by-album.md`
   - Source: `postmortems/2026-02-13-sync-by-album/lead.md`
   - Category: `dead-code`
 
-- [ ] **Remove dead code: `get_tracks_by_albums` function** — The `get_tracks_by_albums` function in `library_repo.rs` is unused and triggers a compiler warning. Remove it.
+- [x] **Remove dead code: `get_tracks_by_albums` function** — The `get_tracks_by_albums` function in `library_repo.rs` is unused and triggers a compiler warning. Remove it. _(Verified already removed from codebase — 2026-02-13T23-39 session)_
   - Source: `postmortems/2026-02-13T21-39/lead.md`
   - Category: `dead-code`
 
@@ -108,12 +113,12 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T21-39/impl-shared-track-row.md`
   - Category: `refactor`
 
-- [ ] **Use shared `formatDuration` in AlbumEditor.svelte** — `AlbumEditor.svelte` has its own copy of `formatDuration` that could now import from `src/lib/utils/format.ts` (created during the shared track row feature).
+- [x] **Use shared `formatDuration` in AlbumEditor.svelte** — `AlbumEditor.svelte` has its own copy of `formatDuration` that could now import from `src/lib/utils/format.ts` (created during the shared track row feature). _(Verified already resolved — AlbumEditor imports from shared format.ts. Statistics.svelte copy is intentionally different — 2026-02-13T23-39 session)_
   - Source: `postmortems/2026-02-13T21-39/lead.md`
   - Source: `postmortems/2026-02-13T21-39/impl-shared-track-row.md`
   - Category: `dead-code`
 
-- [ ] **Remove unused `AlbumNode` import in TreeView.svelte** — `AlbumNode` is imported but unused in TreeView.svelte. Pre-existing issue, not introduced by the refactor.
+- [x] **Remove unused `AlbumNode` import in TreeView.svelte** — `AlbumNode` is imported but unused in TreeView.svelte. Pre-existing issue, not introduced by the refactor. _(Verified already resolved — TreeView imports only ArtistNode and Track — 2026-02-13T23-39 session)_
   - Source: `postmortems/2026-02-13T21-39/impl-shared-track-row.md`
   - Category: `dead-code`
 
@@ -121,7 +126,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T21-39/planner-shared-track-row.md`
   - Category: `feature`
 
-- [ ] **Remove dead code: `ScanCancelled` and `DiskFull` error variants and `is_cancelled` method** — These unused error variants in `AppError` and the `is_cancelled` method trigger compiler warnings. Pre-existing dead code unrelated to recent features.
+- [x] **Remove dead code: `ScanCancelled` and `DiskFull` error variants and `is_cancelled` method** — These unused error variants in `AppError` and the `is_cancelled` method trigger compiler warnings. Pre-existing dead code unrelated to recent features. _(Implemented in feat/project-cleanup branch — 2026-02-13T23-39 session)_
   - Source: `postmortems/2026-02-13T22-09/lead.md`
   - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
   - Category: `dead-code`
@@ -131,15 +136,26 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
   - Category: `documentation`
 
-- [ ] **Remove unused tree CSS from `AlbumListView.svelte`** — After the AlbumHeader extraction, `.tree-toggle`, `.chevron`, `.chevron.expanded`, `.count` CSS rules are unused in AlbumListView (it has no non-album toggles), producing 5 Svelte unused-selector warnings. Remove them.
+- [x] **Remove unused tree CSS from `AlbumListView.svelte`** — After the AlbumHeader extraction, `.tree-toggle`, `.chevron`, `.chevron.expanded`, `.count` CSS rules are unused in AlbumListView (it has no non-album toggles), producing 5 Svelte unused-selector warnings. Remove them. _(Implemented in feat/project-cleanup branch — 2026-02-13T23-39 session)_
   - Source: `postmortems/2026-02-13T23-13/impl-project-cleanup.md`
   - Source: `postmortems/2026-02-13T23-13/lead.md`
   - Category: `dead-code`
 
-- [ ] **Extract shared tree CSS into a shared stylesheet or component** — The tree CSS (`.tree-toggle`, `.tree-toggle:hover`, `.chevron`, `.chevron.expanded`, `.count`, `.children`) is duplicated across TreeView, GenreTreeView, and FolderTreeView (3 components). Consider extracting into a global stylesheet or a base tree CSS file.
+- [ ] **Extract shared tree CSS into a shared stylesheet or component** — The tree CSS (`.tree-toggle`, `.tree-toggle:hover`, `.chevron`, `.chevron.expanded`, `.count`, `.children`) is duplicated across TreeView, GenreTreeView, and FolderTreeView (3 components). Consider extracting into a global stylesheet or a base tree CSS file. Deferred in 2026-02-13T23-39 session: Svelte scoped styles make this non-trivial without a preprocessor; duplication is cosmetic and benign.
   - Source: `postmortems/2026-02-13T23-13/planner-project-cleanup.md`
   - Source: `postmortems/2026-02-13T23-13/impl-project-cleanup.md`
+  - Source: `postmortems/2026-02-13T23-39/planner-project-cleanup.md`
   - Category: `refactor`
+
+- [ ] **Remove unused `PlaylistTrack` struct in `models/playlist.rs`** — The `PlaylistTrack` struct (line 12) is never constructed anywhere in the codebase. It produces a `dead_code` compiler warning. The playlist repo works with `track_id`s directly via the `playlist_tracks` join table. Remove the struct.
+  - Source: `postmortems/2026-02-13T23-39/impl-project-cleanup.md`
+  - Source: `postmortems/2026-02-13T23-39/lead.md`
+  - Category: `dead-code`
+
+- [ ] **Fix Playlists.svelte `playTrack` queue slicing bug** — When playing a track from the Playlists page, `playTrack` calls `playerStore.playPlaylist(tracks.slice(index))` which sets the queue to only tracks from the clicked track onward, discarding earlier tracks. It should call `playerStore.playTrack(track, tracks)` or equivalent to set the full playlist as the queue with `queueIndex` pointing to the clicked track. Now visible to users via the play queue viewer panel.
+  - Source: `postmortems/2026-02-13T23-39/planner-play-queue-viewer.md`
+  - Source: `postmortems/2026-02-13T23-39/lead.md`
+  - Category: `bug`
 
 ## Processed Postmortems
 
@@ -163,3 +179,10 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-13T23-13/lead.md`
 - `postmortems/2026-02-13T23-13/planner-project-cleanup.md`
 - `postmortems/2026-02-13T23-13/impl-project-cleanup.md`
+- `postmortems/2026-02-13T23-39/planner-contextual-search.md`
+- `postmortems/2026-02-13T23-39/planner-play-queue-viewer.md`
+- `postmortems/2026-02-13T23-39/planner-project-cleanup.md`
+- `postmortems/2026-02-13T23-39/impl-contextual-search.md`
+- `postmortems/2026-02-13T23-39/impl-play-queue-viewer.md`
+- `postmortems/2026-02-13T23-39/impl-project-cleanup.md`
+- `postmortems/2026-02-13T23-39/lead.md`

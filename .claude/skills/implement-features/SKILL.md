@@ -23,14 +23,15 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
 
 1. Read `main/docs/FEATURES.md` and match requested features
 2. Read `ACTIONS.md` and check for pending project-level actions (items under `## Project` that are unchecked). If any exist, surface them to the user and ask if they want to bundle any into this session as additional work items.
-3. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
-4. Create a team using the timestamp (e.g., `feature-impl-2026-02-13T15-04`)
-5. For each feature, create a git worktree and install dependencies:
+3. **Pre-check cleanup items** — If the user chose to bundle cleanup actions, verify each one is still relevant before creating a worktree. For each unchecked project action, run a quick grep in `main/` to check if the target symbol/file still exists (e.g., `grep -r "get_tracks_by_artists" main/src-tauri/`). Mark any already-resolved items as `[x]` in `ACTIONS.md` with a note, and drop them from the cleanup bundle. Report what was dropped to the user.
+4. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
+5. Create a team using the timestamp (e.g., `feature-impl-2026-02-13T15-04`)
+6. For each feature, create a git worktree and install dependencies:
    ```bash
    cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
    npm install --prefix ../feat-<slug>
    ```
-6. Create a session postmortem directory: `postmortems/<timestamp>/` (e.g., `postmortems/2026-02-13T15-04/`)
+7. Create a session postmortem directory: `postmortems/<timestamp>/` (e.g., `postmortems/2026-02-13T15-04/`)
 
 ### Phase 2: Planning
 
@@ -130,3 +131,4 @@ The team lead writes `postmortems/<timestamp>/lead.md` after all agents are shut
 - Implementers should mark their feature as `[implemented]` in `docs/FEATURES.md` as part of their commit — `[done]` is set by the lead after user tests and merges
 - `FEATURES.md` statuses: `[ ]` not started, `[designed]` plan exists, `[implemented]` code done awaiting test/merge, `[done]` tested and merged
 - When selecting features to work on, skip anything that is not `[ ]` (not started)
+- Pre-check cleanup ACTIONS.md items with grep before creating worktrees — in one session, 4 of 7 items were already resolved, wasting planner time
