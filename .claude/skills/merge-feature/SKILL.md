@@ -37,6 +37,16 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
 7. If the match is ambiguous, show the candidates and ask the user which one
 8. If FEATURES.md was changed, amend the branch's last commit: `git commit --amend --no-edit -- docs/FEATURES.md` (from the worktree)
 
+### Step 2.5: Check for manual commits (user postmortem)
+
+1. In the worktree, compare the branch commits to what agents authored. Run `git log --oneline --format="%h %s" main..<branch>` in the worktree to get all commits.
+2. Cross-reference against agent postmortems in the most recent `postmortems/<timestamp>/` directory — agent postmortems mention their commit hash.
+3. If there are commits **not** mentioned in any agent postmortem (i.e., the user made manual fixes), prompt the user:
+   - "I see N commit(s) on this branch that weren't in the agent postmortems: `<hash> <message>`. Want to add a quick note about what you changed?"
+   - If yes, ask for a brief description of what was fixed and why
+   - Write `postmortems/<timestamp>/user-<slug>.md` with the standard user postmortem format (What Changed, Commits, Files Modified, Context)
+4. If all commits are accounted for by agent postmortems, skip silently.
+
 ### Step 3: Merge
 
 1. From `main/`, run `git merge <branch>`

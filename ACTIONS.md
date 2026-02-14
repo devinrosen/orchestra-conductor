@@ -65,6 +65,34 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T00-17/lead.md`
   - Category: `workflow`
 
+- [ ] **Add "Known Risks / Blockers" section to plan template** — The playback visualization planner flagged CORS/Tauri asset protocol interaction as a real risk but had to embed it in prose. A dedicated plan section would make risks more visible to the lead and implementer during review.
+  - Source: `postmortems/2026-02-14T06-51/planner-playback-visualization.md`
+  - Source: `postmortems/2026-02-14T06-51/lead.md`
+  - Category: `workflow`
+
+- [ ] **Require plans to include fallback strategies for uncertain fixes** — The project cleanup plan's `state_referenced_locally` fix didn't work (intermediate const approach). The implementer had to pivot to `// svelte-ignore`. Plans should use "try A; if that doesn't work, fallback to B" format for uncertain fixes instead of committing to a single approach.
+  - Source: `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
+  - Source: `postmortems/2026-02-14T06-51/lead.md`
+  - Category: `workflow`
+
+- [ ] **Plans should avoid extended deliberation sections** — The project cleanup plan had 110 lines of stream-of-consciousness exploration for `state_referenced_locally` fixes. Plans should be concise — a short "try A, fallback B" is more useful than exploring 6+ candidate approaches. Cap reasoning sections at ~20 lines.
+  - Source: `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
+  - Source: `postmortems/2026-02-14T06-51/lead.md`
+  - Category: `workflow`
+
+- [ ] **Add grep verification step to plans involving bulk replacements** — The UI skins plan had ~35 color replacements across 14 files. The implementer suggested adding a "verify" step: grep for remaining hardcoded colors after the replacement pass to catch any that were missed. Also useful for `color: white` → `var(--on-accent)` audits.
+  - Source: `postmortems/2026-02-14T06-51/impl-ui-skins.md`
+  - Source: `postmortems/2026-02-14T06-51/lead.md`
+  - Category: `workflow`
+
+- [ ] **Consider adding a UI testing skill or agent** — Visual/interaction bugs (canvas overflow blocking player controls, button icon confusion) can only be caught through manual testing. There is currently no automated UI testing capability in the workflow. Consider a skill or agent that can launch the app, take screenshots, or run basic interaction checks.
+  - Source: `postmortems/2026-02-14T06-51/user-playback-visualization.md`
+  - Category: `workflow`
+
+- [ ] **Note TypeScript strict typing for Web Audio API in plan instructions** — The playback visualization implementer hit a `Uint8Array<ArrayBufferLike>` vs `Uint8Array<ArrayBuffer>` typing issue with `getByteFrequencyData`/`getByteTimeDomainData`. Plans involving typed arrays or browser APIs should note explicit generic types needed for strict TypeScript.
+  - Source: `postmortems/2026-02-14T06-51/impl-playback-visualization.md`
+  - Category: `workflow`
+
 - [x] **Require plans to note which defined types are actually consumed** — The playlist plan included a `PlaylistTrack` struct that went unused by the implementation (repo works with `track_id`s directly). Plans should explicitly note which defined types are consumed by repo/command functions vs. defined speculatively.
   - Source: `postmortems/2026-02-13T22-09/lead.md`
   - Category: `workflow`
@@ -144,7 +172,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T23-13/lead.md`
   - Category: `dead-code`
 
-- [ ] **Extract shared tree CSS into a shared stylesheet or component** — The tree CSS (`.tree-toggle`, `.tree-toggle:hover`, `.chevron`, `.chevron.expanded`, `.count`, `.children`) is duplicated across TreeView, GenreTreeView, and FolderTreeView (3 components). Consider extracting into a global stylesheet or a base tree CSS file. Deferred in 2026-02-13T23-39 session: Svelte scoped styles make this non-trivial without a preprocessor; duplication is cosmetic and benign.
+- [x] **Extract shared tree CSS into a shared stylesheet or component** — The tree CSS (`.tree-toggle`, `.tree-toggle:hover`, `.chevron`, `.chevron.expanded`, `.count`, `.children`) is duplicated across TreeView, GenreTreeView, and FolderTreeView (3 components). Consider extracting into a global stylesheet or a base tree CSS file. _(Implemented in feat/project-cleanup-3 branch — 2026-02-14T06-51 session. Moved 6 selectors to global app.css, removed from 5 component files.)_
   - Source: `postmortems/2026-02-13T23-13/planner-project-cleanup.md`
   - Source: `postmortems/2026-02-13T23-13/impl-project-cleanup.md`
   - Source: `postmortems/2026-02-13T23-39/planner-project-cleanup.md`
@@ -155,7 +183,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `dead-code`
 
-- [ ] **Address pre-existing svelte-check warnings (25 warnings across 9 files)** — `npm run check` produces 25 warnings: mostly `state_referenced_locally` in MetadataEditor.svelte (8), AlbumEditor.svelte (5), ArtistPicker.svelte (2), plus `a11y_interactive_supports_focus` in DeviceSync, MetadataEditor, AlbumEditor, MetadataReport, and `a11y_label_has_associated_control` in SyncProfiles, Settings. Consider a cleanup pass to resolve these.
+- [x] **Address pre-existing svelte-check warnings (25 warnings across 9 files)** — `npm run check` produces 25 warnings: mostly `state_referenced_locally` in MetadataEditor.svelte (8), AlbumEditor.svelte (5), ArtistPicker.svelte (2), plus `a11y_interactive_supports_focus` in DeviceSync, MetadataEditor, AlbumEditor, MetadataReport, and `a11y_label_has_associated_control` in SyncProfiles, Settings. _(Implemented in feat/project-cleanup-3 branch — 2026-02-14T06-51 session. All 25 warnings resolved: 0 errors, 0 warnings.)_
   - Source: `postmortems/2026-02-14T00-17/impl-project-cleanup-2.md`
   - Category: `code-quality`
 
@@ -163,6 +191,20 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T23-39/planner-play-queue-viewer.md`
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `bug`
+
+- [ ] **Document `// svelte-ignore state_referenced_locally` as standard pattern** — The correct Svelte 5 approach for "copy prop to local editable state" is to use `// svelte-ignore state_referenced_locally` in `<script>` blocks. The intermediate-const approach doesn't work. Document this in `main/CLAUDE.md` or `.claude/memory/MEMORY.md` as a project convention.
+  - Source: `postmortems/2026-02-14T06-51/planner-project-cleanup-3.md`
+  - Source: `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
+  - Source: `postmortems/2026-02-14T06-51/lead.md`
+  - Category: `documentation`
+
+- [ ] **Add CSS lint convention to prevent hardcoded colors** — After the UI skins implementation, all colors should go through CSS custom properties. Consider adding a comment convention or lint rule to flag new hardcoded `rgba()` / hex values in `.svelte` style blocks, preventing the same ~35-replacement cleanup from being needed again.
+  - Source: `postmortems/2026-02-14T06-51/planner-ui-skins.md`
+  - Category: `code-quality`
+
+- [ ] **Establish project convention on file deletion (permanent vs trash)** — The duplicate detection feature uses `std::fs::remove_file` for permanent deletion. A "move to trash" option would be safer but requires a new dependency (`trash` crate). Decide on a project-wide convention for features involving file removal.
+  - Source: `postmortems/2026-02-14T06-51/planner-duplicate-detection.md`
+  - Category: `convention`
 
 ## Processed Postmortems
 
@@ -196,3 +238,13 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T00-17/planner-project-cleanup-2.md`
 - `postmortems/2026-02-14T00-17/impl-project-cleanup-2.md`
 - `postmortems/2026-02-14T00-17/lead.md`
+- `postmortems/2026-02-14T06-51/planner-duplicate-detection.md`
+- `postmortems/2026-02-14T06-51/planner-ui-skins.md`
+- `postmortems/2026-02-14T06-51/planner-playback-visualization.md`
+- `postmortems/2026-02-14T06-51/planner-project-cleanup-3.md`
+- `postmortems/2026-02-14T06-51/impl-duplicate-detection.md`
+- `postmortems/2026-02-14T06-51/impl-ui-skins.md`
+- `postmortems/2026-02-14T06-51/impl-playback-visualization.md`
+- `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
+- `postmortems/2026-02-14T06-51/lead.md`
+- `postmortems/2026-02-14T06-51/user-playback-visualization.md`
