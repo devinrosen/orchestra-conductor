@@ -67,12 +67,7 @@ For each approved plan, spawn one **implementer**:
 2. Delete the team
 3. Write the **lead postmortem** (see below)
 4. Present a final summary table to the user with branches, commits, and test results
-5. Remind the user of the merge commands:
-   ```bash
-   cd main && git merge feat/<slug>
-   git worktree remove ../feat-<slug>
-   git branch -d feat/<slug>
-   ```
+5. Remind the user they can merge with `/merge-feature <branch>` which handles the merge, worktree cleanup, directory cleanup, and FEATURES.md update automatically
 
 ## Postmortem Structure
 
