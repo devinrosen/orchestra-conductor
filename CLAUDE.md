@@ -52,3 +52,17 @@ cd main && git merge feat/<slug>
 git worktree remove ../feat-<slug>
 git branch -d feat/<slug>
 ```
+
+## Postmortem Review
+
+Session postmortems collect in `postmortems/`. Use the `review-postmortems` agent to extract actionable items:
+
+```
+Spawn the review-postmortems agent to review unprocessed postmortems.
+```
+
+The agent reads unprocessed postmortems, extracts actions, classifies them as **orchestration** (workflow/skill/process changes) or **project** (code/docs/test changes in `main/`), and appends them to `ACTIONS.md`.
+
+- `ACTIONS.md` — the living backlog of extracted actions, organized by scope
+- Run the agent after each session or before starting a new planning phase
+- Actions flagged by multiple postmortems are high priority
