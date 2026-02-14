@@ -57,9 +57,12 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `workflow`
 
-- [ ] **Allow combined plan+implement for small cleanup bundles** — For well-scoped mechanical tasks (dead code removal, import cleanup), the planning research is 90% of the implementation work. Consider a fast-track mode in `/implement-features` where a single agent plans and implements small cleanup bundles in one pass instead of requiring separate planner and implementer phases.
+- [ ] **Allow combined plan+implement for small cleanup bundles** — For well-scoped mechanical tasks (dead code removal, import cleanup), the planning research is 90% of the implementation work. Consider a fast-track mode in `/implement-features` where a single agent plans and implements small cleanup bundles in one pass instead of requiring separate planner and implementer phases. Reinforced in 2026-02-14T00-17 session: all 3 agents independently noted the two-phase approach was overkill for 2 small fixes.
   - Source: `postmortems/2026-02-13T22-09/lead.md`
   - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
+  - Source: `postmortems/2026-02-14T00-17/planner-project-cleanup-2.md`
+  - Source: `postmortems/2026-02-14T00-17/impl-project-cleanup-2.md`
+  - Source: `postmortems/2026-02-14T00-17/lead.md`
   - Category: `workflow`
 
 - [x] **Require plans to note which defined types are actually consumed** — The playlist plan included a `PlaylistTrack` struct that went unused by the implementation (repo works with `track_id`s directly). Plans should explicitly note which defined types are consumed by repo/command functions vs. defined speculatively.
@@ -147,12 +150,16 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T23-39/planner-project-cleanup.md`
   - Category: `refactor`
 
-- [ ] **Remove unused `PlaylistTrack` struct in `models/playlist.rs`** — The `PlaylistTrack` struct (line 12) is never constructed anywhere in the codebase. It produces a `dead_code` compiler warning. The playlist repo works with `track_id`s directly via the `playlist_tracks` join table. Remove the struct.
+- [x] **Remove unused `PlaylistTrack` struct in `models/playlist.rs`** — The `PlaylistTrack` struct (line 12) is never constructed anywhere in the codebase. It produces a `dead_code` compiler warning. The playlist repo works with `track_id`s directly via the `playlist_tracks` join table. Remove the struct.
   - Source: `postmortems/2026-02-13T23-39/impl-project-cleanup.md`
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `dead-code`
 
-- [ ] **Fix Playlists.svelte `playTrack` queue slicing bug** — When playing a track from the Playlists page, `playTrack` calls `playerStore.playPlaylist(tracks.slice(index))` which sets the queue to only tracks from the clicked track onward, discarding earlier tracks. It should call `playerStore.playTrack(track, tracks)` or equivalent to set the full playlist as the queue with `queueIndex` pointing to the clicked track. Now visible to users via the play queue viewer panel.
+- [ ] **Address pre-existing svelte-check warnings (25 warnings across 9 files)** — `npm run check` produces 25 warnings: mostly `state_referenced_locally` in MetadataEditor.svelte (8), AlbumEditor.svelte (5), ArtistPicker.svelte (2), plus `a11y_interactive_supports_focus` in DeviceSync, MetadataEditor, AlbumEditor, MetadataReport, and `a11y_label_has_associated_control` in SyncProfiles, Settings. Consider a cleanup pass to resolve these.
+  - Source: `postmortems/2026-02-14T00-17/impl-project-cleanup-2.md`
+  - Category: `code-quality`
+
+- [x] **Fix Playlists.svelte `playTrack` queue slicing bug** — When playing a track from the Playlists page, `playTrack` calls `playerStore.playPlaylist(tracks.slice(index))` which sets the queue to only tracks from the clicked track onward, discarding earlier tracks. It should call `playerStore.playTrack(track, tracks)` or equivalent to set the full playlist as the queue with `queueIndex` pointing to the clicked track. Now visible to users via the play queue viewer panel.
   - Source: `postmortems/2026-02-13T23-39/planner-play-queue-viewer.md`
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `bug`
@@ -186,3 +193,6 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-13T23-39/impl-play-queue-viewer.md`
 - `postmortems/2026-02-13T23-39/impl-project-cleanup.md`
 - `postmortems/2026-02-13T23-39/lead.md`
+- `postmortems/2026-02-14T00-17/planner-project-cleanup-2.md`
+- `postmortems/2026-02-14T00-17/impl-project-cleanup-2.md`
+- `postmortems/2026-02-14T00-17/lead.md`
