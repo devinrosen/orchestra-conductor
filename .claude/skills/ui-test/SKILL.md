@@ -2,7 +2,7 @@
 name: ui-test
 description: Run Playwright against the Vite dev server with Tauri IPC mocks, screenshot each page, and analyze for visual/layout bugs using Claude's vision.
 disable-model-invocation: true
-argument-hint: [page-names or "all"]
+argument-hint: [page-names or "all"] [--label <name>]
 ---
 
 # /ui-test
@@ -12,8 +12,10 @@ Visual QA skill that uses Playwright to navigate the app (via Vite dev server + 
 ## Usage
 
 ```
-/ui-test              # Test all pages
-/ui-test library      # Test specific page(s)
+/ui-test                        # Test all pages (cleans previous screenshots)
+/ui-test library                # Test specific page(s)
+/ui-test library --label v2     # Iterative: saves as library-v2.png (no cleanup)
+/ui-test all --label after-fix  # All pages, labeled (no cleanup)
 ```
 
 ## Prerequisites
@@ -44,53 +46,39 @@ Check if Chromium is available. If not, install it:
 cd main && npx playwright install chromium 2>/dev/null || npx playwright install chromium
 ```
 
-### Step 2: Ensure Vite dev server is running
+### Step 2: Run Playwright tests
 
-Check if port 1420 is serving:
+The `playwright.config.ts` has `webServer` configured to auto-start the Vite dev server on port 1420 (and reuse it if already running). No manual server management is needed.
 
-```bash
-curl -s -o /dev/null -w "%{http_code}" http://localhost:1420
-```
-
-If it returns 000 or an error, start the dev server:
-
-```bash
-cd main && npm run dev &
-```
-
-Wait for it to be ready (poll every 2 seconds, up to 30 seconds):
-
-```bash
-for i in $(seq 1 15); do
-  if curl -s -o /dev/null -w "%{http_code}" http://localhost:1420 | grep -q "200"; then
-    echo "Dev server ready"
-    break
-  fi
-  sleep 2
-done
-```
-
-### Step 3: Run Playwright tests
-
-Run the screenshot test. This uses Tauri IPC mocks (injected via `page.addInitScript()`) so all pages render with realistic data.
-
-To test all pages:
+**Standard run** (cleans previous screenshots, takes fresh ones):
 
 ```bash
 cd main && npx playwright test e2e/ui-screenshots.spec.ts
 ```
 
-Screenshots are saved to `test-results/screenshots/`:
-- `library.png`
-- `statistics.png`
-- `playlists.png`
-- `profiles.png`
-- `devices.png`
-- `settings.png`
+**Specific pages:**
 
-If only specific pages were requested, note which screenshots to analyze.
+```bash
+cd main && PAGES=library,settings npx playwright test e2e/ui-screenshots.spec.ts
+```
 
-### Step 4: Analyze Screenshots
+**Iterative/labeled run** (preserves existing screenshots, appends label):
+
+```bash
+cd main && LABEL=after-fix npx playwright test e2e/ui-screenshots.spec.ts
+```
+
+This produces `library-after-fix.png`, `statistics-after-fix.png`, etc. alongside any existing screenshots — useful for before/after comparisons.
+
+### Screenshot naming and cleanup
+
+- **Without `LABEL`**: Previous screenshots are deleted before the run. Clean slate every time.
+- **With `LABEL`**: Previous screenshots are preserved. New ones are saved as `{page}-{label}.png`.
+- **Auto-increment**: If a file already exists (e.g., running the same label twice), names increment automatically: `library-after-fix.png` → `library-after-fix-2.png` → `library-after-fix-3.png`.
+
+Screenshots are saved to `test-results/screenshots/` (gitignored).
+
+### Step 3: Analyze Screenshots
 
 Read each screenshot using the `Read` tool (Claude's vision). For each screenshot, evaluate:
 
@@ -119,7 +107,7 @@ Read each screenshot using the `Read` tool (Claude's vision). For each screensho
 - Consistent use of CSS custom properties (no hardcoded colors standing out)
 - Dark/light theme rendering correctly
 
-### Step 5: Report
+### Step 4: Report
 
 Present a summary table:
 
@@ -137,6 +125,8 @@ For each issue found, include:
 - **Description**: What's wrong
 - **Location**: Where in the screenshot (e.g., "bottom-right, player controls area")
 - **Suggestion**: How to fix it
+
+When running with `--label`, also compare labeled screenshots against the base versions (if they exist) and note any regressions or improvements.
 
 ## How the mocks work
 
