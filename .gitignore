@@ -1,0 +1,4 @@
+main/
+feat-*/
+fix-*/
+.DS_Store

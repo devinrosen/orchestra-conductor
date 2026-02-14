@@ -1,0 +1,119 @@
+# /implement-features
+
+Plan and implement features using an agent team with isolated git worktrees.
+
+## Usage
+
+```
+/implement-features <feature1>, <feature2>, ...
+```
+
+Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
+
+## Workflow
+
+### Phase 1: Setup
+
+1. Read `main/docs/FEATURES.md` and match requested features
+2. Create a team (e.g., `feature-impl-YYYY-MM-DD`)
+3. For each feature, create a git worktree:
+   ```bash
+   cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
+   ```
+4. Create a session postmortem directory: `postmortems/YYYY-MM-DD-<team-name>/`
+
+### Phase 2: Planning
+
+Spawn one **planner** per feature in parallel. Critical rules:
+
+- **Do NOT use `mode: "plan"`.** Plan mode prevents file writes, but planners need to write PLAN.md. Use `mode: "default"` instead.
+- Each planner's prompt must include:
+  - Their worktree path
+  - The feature description from FEATURES.md
+  - Instruction to read `CLAUDE.md` in their worktree
+  - Instruction to **only research and write PLAN.md** — no implementation
+  - Instruction to write a postmortem before finishing (see Postmortem section below)
+  - Instruction to send a message to the lead when PLAN.md is complete
+
+**On receiving a planner's completion message:**
+1. Read the PLAN.md from their worktree
+2. If PLAN.md is missing, write it from the message content as a fallback
+3. Review the plan against the codebase (spot-check key files mentioned)
+4. Present the plan to the user for approval
+5. **Shut down the planner immediately** — do not wait for them to idle
+
+### Phase 3: Implementation
+
+For each approved plan, spawn one **implementer**:
+
+- Use `mode: "bypassPermissions"` so they can edit files and run commands freely
+- Each implementer's prompt must include:
+  - Their worktree path
+  - Instruction to read `CLAUDE.md` and `PLAN.md` in their worktree
+  - Instruction to follow the plan strictly
+  - Instruction to run `cargo test` (from src-tauri/) and `npm run check` before committing
+  - Instruction to mark the feature as `[implemented]` in `docs/FEATURES.md` (change `- [ ]` to `- [implemented]`) if it matches an entry. Do NOT mark as `[done]` — that happens after the user tests and merges.
+  - Instruction to commit with a clear message on the current branch
+  - Instruction to write a postmortem before finishing (see Postmortem section below)
+  - Instruction to send a message to the lead with a summary when done
+
+**On receiving an implementer's completion message:**
+1. Mark the task as completed
+2. Shut down the implementer immediately
+
+### Phase 4: Wrap-Up
+
+1. Shut down all remaining teammates
+2. Delete the team
+3. Write the **lead postmortem** (see below)
+4. Present a final summary table to the user with branches, commits, and test results
+5. Remind the user of the merge commands:
+   ```bash
+   cd main && git merge feat/<slug>
+   git worktree remove ../feat-<slug>
+   git branch -d feat/<slug>
+   ```
+
+## Postmortem Structure
+
+### Agent Postmortems (planners and implementers)
+
+Each agent writes their postmortem to `postmortems/YYYY-MM-DD-<team-name>/<agent-name>.md` as their **last action before signaling completion**. Include this in every agent's spawn prompt:
+
+```
+Before you send your completion message, write a postmortem file to:
+postmortems/YYYY-MM-DD-<team-name>/<your-name>.md
+
+Include these sections:
+- **Task**: What were you asked to do?
+- **What Went Well**: What was smooth or effective?
+- **What Went Wrong**: What was confusing, missing, or caused friction?
+- **PLAN.md Quality** (implementers only): Was the plan clear and complete? What was missing or ambiguous?
+- **Codebase Surprises**: Anything unexpected you discovered about the code?
+- **Suggestions**: What would you change about the workflow, instructions, or plan format?
+```
+
+### Lead Postmortem
+
+The team lead writes `postmortems/YYYY-MM-DD-<team-name>/lead.md` after all agents are shut down. Include:
+
+- **Goal**: What was the session trying to accomplish?
+- **Timeline**: Chronological summary of key events
+- **Results**: Table of features, branches, commits, test results
+- **What Went Well**: Effective coordination, fast phases, clean implementations
+- **What Went Wrong**: Coordination issues, stuck agents, rework, timing problems
+- **What Can Be Improved**: Actionable changes to this skill or the workflow
+- **Agent Feedback Summary**: Key themes from agent postmortems (read them first)
+
+## Lessons Learned (update this section over time)
+
+- Never use `mode: "plan"` for planners — it prevents writing PLAN.md and causes approval loops
+- Shut down planners immediately after their PLAN.md is confirmed on disk — don't let them idle
+- Always verify PLAN.md exists on disk after a planner reports completion
+- Implementers with `bypassPermissions` mode work smoothly and avoid permission prompt interruptions
+- Git worktree isolation prevents all cross-agent conflicts
+- Parallel planning is highly effective — plans complete nearly simultaneously
+- High-quality plans lead to first-try implementations with passing tests
+- Implementers should mark their feature as `[implemented]` in `docs/FEATURES.md` as part of their commit — `[done]` is set by the lead after user tests and merges
+- `FEATURES.md` statuses: `[ ]` not started, `[designed]` plan exists, `[implemented]` code done awaiting test/merge, `[done]` tested and merged
+- When selecting features to work on, skip anything that is not `[ ]` (not started)
