@@ -42,8 +42,11 @@ Spawn one **planner** per feature in parallel. Critical rules:
   - The feature description from FEATURES.md
   - Instruction to read `CLAUDE.md` in their worktree
   - Instruction to **only research and write PLAN.md** — no implementation
-  - Instruction that PLAN.md must include a **Dead Code** section listing any existing functions that become unused as a result of the plan's changes (so they can be removed during implementation)
+  - Instruction that PLAN.md must include a **Dead Code** section listing any existing functions that become unused as a result of the plan's changes (so they can be removed during implementation). For cleanup tasks, use a **Dead Code Summary** table with columns: function name, file, reason for removal.
   - Instruction that PLAN.md must include a **Test Cases** section specifying exact test scenarios (and optionally skeleton test code) for new functions and commands
+  - Instruction that when defining new types/structs, the plan must note which ones are actually consumed by repo functions and commands vs. defined speculatively. Do not include unused types in the plan.
+  - Instruction that when noting code duplication or refactoring targets, the plan must include exact counts and list the specific functions involved (e.g., "4 instances in `get_all_tracks`, `get_tracks_for_device`, `search_tracks`, `get_tracks_for_playlist`") — never approximate with "6-7 times"
+  - Instruction to reference existing patterns by name for each new component (e.g., "model: follow `profile.rs`, store: follow `profilesStore`, commands: follow `profile` commands"). This is the most effective guidance for implementers.
   - Instruction to write a postmortem before finishing (see Postmortem section below)
   - Instruction to send a message to the lead when PLAN.md is complete
 

@@ -57,19 +57,19 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
   - Category: `workflow`
 
-- [ ] **Require plans to note which defined types are actually consumed** — The playlist plan included a `PlaylistTrack` struct that went unused by the implementation (repo works with `track_id`s directly). Plans should explicitly note which defined types are consumed by repo/command functions vs. defined speculatively.
+- [x] **Require plans to note which defined types are actually consumed** — The playlist plan included a `PlaylistTrack` struct that went unused by the implementation (repo works with `track_id`s directly). Plans should explicitly note which defined types are consumed by repo/command functions vs. defined speculatively.
   - Source: `postmortems/2026-02-13T22-09/lead.md`
   - Category: `workflow`
 
-- [ ] **Include "Dead Code Summary" table in cleanup plan template** — The cleanup planner's dead code summary table format was praised as effective for quick reference. Add this as a recommended pattern in planner instructions for cleanup tasks.
+- [x] **Include "Dead Code Summary" table in cleanup plan template** — The cleanup planner's dead code summary table format was praised as effective for quick reference. Add this as a recommended pattern in planner instructions for cleanup tasks.
   - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
   - Category: `workflow`
 
-- [ ] **Use precise duplication counts in action descriptions** — The action for `track_from_row` said "6-7 times" which led to uncertainty requiring manual verification (actual count was 6, with 2 in dead functions). Action descriptions should include exact counts and specific function names.
+- [x] **Use precise duplication counts in action descriptions** — The action for `track_from_row` said "6-7 times" which led to uncertainty requiring manual verification (actual count was 6, with 2 in dead functions). Action descriptions should include exact counts and specific function names.
   - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
   - Category: `workflow`
 
-- [ ] **Instruct planners to reference existing patterns by name** — The playlist implementer found "follow the profilesStore pattern" highly effective as a convention guide. Planner instructions should require naming the specific existing file/module to follow for each new component (e.g., "model: follow `profile.rs`, store: follow `profilesStore`").
+- [x] **Instruct planners to reference existing patterns by name** — The playlist implementer found "follow the profilesStore pattern" highly effective as a convention guide. Planner instructions should require naming the specific existing file/module to follow for each new component (e.g., "model: follow `profile.rs`, store: follow `profilesStore`").
   - Source: `postmortems/2026-02-13T22-09/impl-playlist-support.md`
   - Category: `workflow`
 
