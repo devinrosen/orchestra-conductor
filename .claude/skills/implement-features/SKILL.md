@@ -36,6 +36,28 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
    ```
 8. Create a session postmortem directory: `postmortems/<timestamp>/` (e.g., `postmortems/2026-02-13T15-04/`)
 
+### Phase 1.5: Fast-Track Check
+
+After setup, evaluate whether the selected work qualifies for **fast-track mode** — a single agent that plans and implements in one pass, skipping separate planning and implementation phases.
+
+**Fast-track criteria** (ALL must be true):
+- Work is purely mechanical: documentation changes, dead code removal, import cleanup, convention updates, small bug fixes with obvious solutions
+- No architectural decisions or design choices required
+- Scope is small enough for one agent to hold in context (roughly ≤3 files changed)
+
+If fast-track criteria are met, ask the user:
+> "This looks like small cleanup work. Use fast-track mode (single agent plans + implements in one pass) or standard two-phase mode?"
+
+**Fast-track flow:**
+1. Spawn one agent per worktree with `mode: "bypassPermissions"`
+2. Agent prompt includes all standard planner instructions PLUS implementation instructions
+3. Agent writes a brief PLAN.md (for the record), implements it immediately, runs tests, and commits
+4. Agent writes a postmortem and sends completion message
+5. Lead reviews the commit diff (not a separate plan review step)
+6. Skip Phase 2 and Phase 3 — go directly to Phase 4 (Wrap-Up)
+
+If fast-track criteria are NOT met, proceed with the standard two-phase workflow below.
+
 ### Phase 2: Planning
 
 Spawn one **planner** per feature in parallel. Critical rules:
@@ -51,6 +73,12 @@ Spawn one **planner** per feature in parallel. Critical rules:
   - Instruction that when defining new types/structs, the plan must note which ones are actually consumed by repo functions and commands vs. defined speculatively. Do not include unused types in the plan.
   - Instruction that when noting code duplication or refactoring targets, the plan must include exact counts and list the specific functions involved (e.g., "4 instances in `get_all_tracks`, `get_tracks_for_device`, `search_tracks`, `get_tracks_for_playlist`") — never approximate with "6-7 times"
   - Instruction to reference existing patterns by name for each new component (e.g., "model: follow `profile.rs`, store: follow `profilesStore`, commands: follow `profile` commands"). This is the most effective guidance for implementers.
+  - Instruction that PLAN.md must include a **Known Risks / Blockers** section listing technical uncertainties, external dependencies, or potential issues (e.g., "CORS/Tauri asset protocol interaction untested", "requires new crate dependency"). Keep it short — if there are no risks, write "None identified."
+  - Instruction that for uncertain fixes (where the first approach might not work), the plan must use a **"try A; if that doesn't work, fallback to B"** format instead of committing to a single approach. Example: "Try extracting to intermediate const; if that still triggers the warning, fallback to `// svelte-ignore`."
+  - Instruction that plans should be **concise** — avoid extended deliberation or stream-of-consciousness exploration of multiple candidate approaches. Cap reasoning/exploration sections at ~20 lines. A short "try A, fallback B" is more useful than exploring 6+ candidates in prose.
+  - Instruction that for plans involving **bulk replacements** (e.g., renaming a function across files, replacing hardcoded colors), the plan must include a **Verification** step: grep for remaining instances after the replacement pass to catch any that were missed.
+  - Instruction that when documenting a new convention, if the planner discovers **existing code that violates it**, the plan must include a **Fix Existing Violations** section listing the specific files and values to fix — not just mention them as context.
+  - Instruction that plans involving **TypeScript typed arrays or browser APIs** (Web Audio, Canvas, etc.) should note explicit generic types needed for strict TypeScript (e.g., `Uint8Array<ArrayBuffer>` not `Uint8Array<ArrayBufferLike>` for `getByteFrequencyData`).
   - Instruction to write a postmortem before finishing (see Postmortem section below)
   - Instruction to send a message to the lead when PLAN.md is complete
 
@@ -137,3 +165,7 @@ The team lead writes `postmortems/<timestamp>/lead.md` after all agents are shut
 - Pre-check cleanup ACTIONS.md items with grep before creating worktrees — in one session, 4 of 7 items were already resolved, wasting planner time
 - Always use `AskUserQuestion` with multi-select for feature and action selection — never just list them in text. Interactive menus are faster and clearer for the user
 - Feature selection must be organized by FEATURES.md section (one question per section) — the tool limits each question to 4 options, so cramming all features into one question silently drops features. Use one `AskUserQuestion` call with up to 4 section-questions, then a separate call for ACTIONS.md items
+- Fast-track mode (single agent plan+implement) is effective for small cleanup/documentation tasks — saves time and avoids the overhead of separate planner and implementer agents for trivial work
+- Plans involving uncertain fixes should always include fallback strategies — committing to a single approach wastes implementer time when it doesn't work
+- Plans should be concise — extended deliberation sections (100+ lines exploring candidates) are less useful than a short "try A, fallback B" format
+- When documenting a convention, the plan should also fix existing violations — planners who discover violations should include them as action items, not just context

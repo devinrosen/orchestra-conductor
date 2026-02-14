@@ -57,30 +57,31 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `workflow`
 
-- [ ] **Allow combined plan+implement for small cleanup bundles** — For well-scoped mechanical tasks (dead code removal, import cleanup), the planning research is 90% of the implementation work. Consider a fast-track mode in `/implement-features` where a single agent plans and implements small cleanup bundles in one pass instead of requiring separate planner and implementer phases. Reinforced in 2026-02-14T00-17 session: all 3 agents independently noted the two-phase approach was overkill for 2 small fixes.
+- [x] **Allow combined plan+implement for small cleanup bundles** — For well-scoped mechanical tasks (dead code removal, import cleanup, documentation), the planning research is 90% of the implementation work. Consider a fast-track mode in `/implement-features` where a single agent plans and implements small cleanup bundles in one pass instead of requiring separate planner and implementer phases. Reinforced in 2026-02-14T00-17 session: all 3 agents independently noted the two-phase approach was overkill for 2 small fixes. Reinforced again in 2026-02-14T09-50 session: pure documentation tasks (3 CLAUDE.md convention bullets) completed in <5 min but still required 2 agents.
   - Source: `postmortems/2026-02-13T22-09/lead.md`
   - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
   - Source: `postmortems/2026-02-14T00-17/planner-project-cleanup-2.md`
   - Source: `postmortems/2026-02-14T00-17/impl-project-cleanup-2.md`
   - Source: `postmortems/2026-02-14T00-17/lead.md`
+  - Source: `postmortems/2026-02-14T09-50/lead.md`
   - Category: `workflow`
 
-- [ ] **Add "Known Risks / Blockers" section to plan template** — The playback visualization planner flagged CORS/Tauri asset protocol interaction as a real risk but had to embed it in prose. A dedicated plan section would make risks more visible to the lead and implementer during review.
+- [x] **Add "Known Risks / Blockers" section to plan template** — The playback visualization planner flagged CORS/Tauri asset protocol interaction as a real risk but had to embed it in prose. A dedicated plan section would make risks more visible to the lead and implementer during review.
   - Source: `postmortems/2026-02-14T06-51/planner-playback-visualization.md`
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `workflow`
 
-- [ ] **Require plans to include fallback strategies for uncertain fixes** — The project cleanup plan's `state_referenced_locally` fix didn't work (intermediate const approach). The implementer had to pivot to `// svelte-ignore`. Plans should use "try A; if that doesn't work, fallback to B" format for uncertain fixes instead of committing to a single approach.
+- [x] **Require plans to include fallback strategies for uncertain fixes** — The project cleanup plan's `state_referenced_locally` fix didn't work (intermediate const approach). The implementer had to pivot to `// svelte-ignore`. Plans should use "try A; if that doesn't work, fallback to B" format for uncertain fixes instead of committing to a single approach.
   - Source: `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `workflow`
 
-- [ ] **Plans should avoid extended deliberation sections** — The project cleanup plan had 110 lines of stream-of-consciousness exploration for `state_referenced_locally` fixes. Plans should be concise — a short "try A, fallback B" is more useful than exploring 6+ candidate approaches. Cap reasoning sections at ~20 lines.
+- [x] **Plans should avoid extended deliberation sections** — The project cleanup plan had 110 lines of stream-of-consciousness exploration for `state_referenced_locally` fixes. Plans should be concise — a short "try A, fallback B" is more useful than exploring 6+ candidate approaches. Cap reasoning sections at ~20 lines.
   - Source: `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `workflow`
 
-- [ ] **Add grep verification step to plans involving bulk replacements** — The UI skins plan had ~35 color replacements across 14 files. The implementer suggested adding a "verify" step: grep for remaining hardcoded colors after the replacement pass to catch any that were missed. Also useful for `color: white` → `var(--on-accent)` audits.
+- [x] **Add grep verification step to plans involving bulk replacements** — The UI skins plan had ~35 color replacements across 14 files. The implementer suggested adding a "verify" step: grep for remaining hardcoded colors after the replacement pass to catch any that were missed. Also useful for `color: white` → `var(--on-accent)` audits.
   - Source: `postmortems/2026-02-14T06-51/impl-ui-skins.md`
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `workflow`
@@ -89,7 +90,7 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T06-51/user-playback-visualization.md`
   - Category: `workflow`
 
-- [ ] **Note TypeScript strict typing for Web Audio API in plan instructions** — The playback visualization implementer hit a `Uint8Array<ArrayBufferLike>` vs `Uint8Array<ArrayBuffer>` typing issue with `getByteFrequencyData`/`getByteTimeDomainData`. Plans involving typed arrays or browser APIs should note explicit generic types needed for strict TypeScript.
+- [x] **Note TypeScript strict typing for Web Audio API in plan instructions** — The playback visualization implementer hit a `Uint8Array<ArrayBufferLike>` vs `Uint8Array<ArrayBuffer>` typing issue with `getByteFrequencyData`/`getByteTimeDomainData`. Plans involving typed arrays or browser APIs should note explicit generic types needed for strict TypeScript.
   - Source: `postmortems/2026-02-14T06-51/impl-playback-visualization.md`
   - Category: `workflow`
 
@@ -116,6 +117,11 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
 
 - [x] **Mark ACTIONS.md items done when completed as part of another task** — Actions A (COALESCE docs) and D (track_from_row) were completed in a prior session but never checked off in ACTIONS.md, causing the next planner to re-investigate them. Add a step in the `/implement-features` wrap-up phase or `/merge-feature` skill to check off any ACTIONS.md items that were resolved by the session's work.
   - Source: `postmortems/2026-02-13T23-13/lead.md`
+  - Category: `workflow`
+
+- [x] **Require plans to include fix actions for convention violations they discover** — When a planner documents a new convention and discovers existing code that violates it, the plan should include a separate action item to fix those violations, not just list them as context. In the 2026-02-14T09-50 session, the planner found DuplicateReport.svelte had ~10 hardcoded colors violating the CSS convention but listed them as context — the user had to manually request the fix. Update planner instructions in `/implement-features` to require a "Fix Existing Violations" section when documenting conventions.
+  - Source: `postmortems/2026-02-14T09-50/impl-project-docs.md`
+  - Source: `postmortems/2026-02-14T09-50/lead.md`
   - Category: `workflow`
 
 ## Project
@@ -192,17 +198,17 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T23-39/lead.md`
   - Category: `bug`
 
-- [ ] **Document `// svelte-ignore state_referenced_locally` as standard pattern** — The correct Svelte 5 approach for "copy prop to local editable state" is to use `// svelte-ignore state_referenced_locally` in `<script>` blocks. The intermediate-const approach doesn't work. Document this in `main/CLAUDE.md` or `.claude/memory/MEMORY.md` as a project convention.
+- [x] **Document `// svelte-ignore state_referenced_locally` as standard pattern** — The correct Svelte 5 approach for "copy prop to local editable state" is to use `// svelte-ignore state_referenced_locally` in `<script>` blocks. The intermediate-const approach doesn't work. Document this in `main/CLAUDE.md` or `.claude/memory/MEMORY.md` as a project convention.
   - Source: `postmortems/2026-02-14T06-51/planner-project-cleanup-3.md`
   - Source: `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `documentation`
 
-- [ ] **Add CSS lint convention to prevent hardcoded colors** — After the UI skins implementation, all colors should go through CSS custom properties. Consider adding a comment convention or lint rule to flag new hardcoded `rgba()` / hex values in `.svelte` style blocks, preventing the same ~35-replacement cleanup from being needed again.
+- [x] **Add CSS lint convention to prevent hardcoded colors** — After the UI skins implementation, all colors should go through CSS custom properties. Consider adding a comment convention or lint rule to flag new hardcoded `rgba()` / hex values in `.svelte` style blocks, preventing the same ~35-replacement cleanup from being needed again.
   - Source: `postmortems/2026-02-14T06-51/planner-ui-skins.md`
   - Category: `code-quality`
 
-- [ ] **Establish project convention on file deletion (permanent vs trash)** — The duplicate detection feature uses `std::fs::remove_file` for permanent deletion. A "move to trash" option would be safer but requires a new dependency (`trash` crate). Decide on a project-wide convention for features involving file removal.
+- [x] **Establish project convention on file deletion (permanent vs trash)** — The duplicate detection feature uses `std::fs::remove_file` for permanent deletion. A "move to trash" option would be safer but requires a new dependency (`trash` crate). Decide on a project-wide convention for features involving file removal.
   - Source: `postmortems/2026-02-14T06-51/planner-duplicate-detection.md`
   - Category: `convention`
 
@@ -248,3 +254,6 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T06-51/impl-project-cleanup-3.md`
 - `postmortems/2026-02-14T06-51/lead.md`
 - `postmortems/2026-02-14T06-51/user-playback-visualization.md`
+- `postmortems/2026-02-14T09-50/planner-project-docs.md`
+- `postmortems/2026-02-14T09-50/impl-project-docs.md`
+- `postmortems/2026-02-14T09-50/lead.md`
