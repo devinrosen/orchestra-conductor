@@ -86,7 +86,7 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `workflow`
 
-- [ ] **Consider adding a UI testing skill or agent** — Visual/interaction bugs (canvas overflow blocking player controls, button icon confusion) can only be caught through manual testing. There is currently no automated UI testing capability in the workflow. Consider a skill or agent that can launch the app, take screenshots, or run basic interaction checks.
+- [x] **Consider adding a UI testing skill or agent** — Visual/interaction bugs (canvas overflow blocking player controls, button icon confusion) can only be caught through manual testing. Created `/ui-test` skill that launches the Tauri app, navigates each page via AppleScript coordinate clicking, takes screenshots with `screencapture`, and uses Claude's vision to analyze for visual/layout bugs.
   - Source: `postmortems/2026-02-14T06-51/user-playback-visualization.md`
   - Category: `workflow`
 

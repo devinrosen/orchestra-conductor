@@ -1,4 +1,5 @@
 main/
 feat-*/
 fix-*/
+test-results/
 .DS_Store
