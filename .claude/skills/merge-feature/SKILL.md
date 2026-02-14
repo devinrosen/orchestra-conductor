@@ -26,7 +26,18 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
 3. If the branch doesn't exist, report the error and list available branches
 4. Run `git log --oneline main..<branch>` to show what will be merged
 
-### Step 2: Merge
+### Step 2: Update FEATURES.md on the branch
+
+1. Find the worktree for the branch (from `git worktree list`). If no worktree exists, create a temporary one.
+2. Read `docs/FEATURES.md` in the worktree
+3. Look for a feature entry whose title matches the branch slug (fuzzy match — e.g., branch `feat/eject-device-button` matches `**Eject/unmount device button**`)
+4. If a match is found and its status is `[implemented]` or `[ ]`, update it to `[done]`
+5. If a match is found and it's already `[done]`, skip — go straight to Step 3
+6. If no match is found (e.g., a fix branch or ad-hoc work), skip — go straight to Step 3
+7. If the match is ambiguous, show the candidates and ask the user which one
+8. If FEATURES.md was changed, amend the branch's last commit: `git commit --amend --no-edit -- docs/FEATURES.md` (from the worktree)
+
+### Step 3: Merge
 
 1. From `main/`, run `git merge <branch>`
 2. If there are merge conflicts:
@@ -35,7 +46,7 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
    - Show the user what you resolved and ask for confirmation before completing the merge commit
 3. If the merge is clean, it completes automatically
 
-### Step 3: Clean up git worktree
+### Step 4: Clean up git worktree
 
 1. Run `git worktree list` to find any worktree associated with the branch
 2. If a worktree exists, remove it: `git worktree remove <path>`
@@ -43,19 +54,10 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
 4. Run `git worktree prune` to clean up stale references
 5. Delete the branch: `git branch -d <branch>`
 
-### Step 4: Clean up the orchestration directory
+### Step 5: Clean up the orchestration directory
 
 1. Check if a `feat-<slug>/` or `fix-<slug>/` directory exists at the orchestration workspace root (`../` relative to `main/`)
 2. If it exists and is not a valid worktree (stale leftover), remove it
-
-### Step 5: Update FEATURES.md
-
-1. Read `main/docs/FEATURES.md`
-2. Look for a feature entry whose title matches the branch slug (fuzzy match — e.g., branch `feat/eject-device-button` matches `**Eject/unmount device button**`)
-3. If a match is found and its status is `[implemented]` or `[ ]`, update it to `[done]`
-4. If a match is found and it's already `[done]`, skip
-5. If no match is found (e.g., a fix branch or ad-hoc work), inform the user — no update needed
-6. If the match is ambiguous, show the candidates and ask the user which one
 
 ### Step 6: Summary
 

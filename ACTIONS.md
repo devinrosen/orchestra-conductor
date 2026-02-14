@@ -52,6 +52,32 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-13T21-39/impl-library-stats.md`
   - Category: `workflow`
 
+- [ ] **Allow combined plan+implement for small cleanup bundles** — For well-scoped mechanical tasks (dead code removal, import cleanup), the planning research is 90% of the implementation work. Consider a fast-track mode in `/implement-features` where a single agent plans and implements small cleanup bundles in one pass instead of requiring separate planner and implementer phases.
+  - Source: `postmortems/2026-02-13T22-09/lead.md`
+  - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
+  - Category: `workflow`
+
+- [ ] **Require plans to note which defined types are actually consumed** — The playlist plan included a `PlaylistTrack` struct that went unused by the implementation (repo works with `track_id`s directly). Plans should explicitly note which defined types are consumed by repo/command functions vs. defined speculatively.
+  - Source: `postmortems/2026-02-13T22-09/lead.md`
+  - Category: `workflow`
+
+- [ ] **Include "Dead Code Summary" table in cleanup plan template** — The cleanup planner's dead code summary table format was praised as effective for quick reference. Add this as a recommended pattern in planner instructions for cleanup tasks.
+  - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
+  - Category: `workflow`
+
+- [ ] **Use precise duplication counts in action descriptions** — The action for `track_from_row` said "6-7 times" which led to uncertainty requiring manual verification (actual count was 6, with 2 in dead functions). Action descriptions should include exact counts and specific function names.
+  - Source: `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
+  - Category: `workflow`
+
+- [ ] **Instruct planners to reference existing patterns by name** — The playlist implementer found "follow the profilesStore pattern" highly effective as a convention guide. Planner instructions should require naming the specific existing file/module to follow for each new component (e.g., "model: follow `profile.rs`, store: follow `profilesStore`").
+  - Source: `postmortems/2026-02-13T22-09/impl-playlist-support.md`
+  - Category: `workflow`
+
+- [x] **Update test count in CLAUDE.md during merge flow** — Resolved by removing the hard-coded test count from `main/CLAUDE.md` entirely, eliminating the maintenance burden. No merge-flow step needed.
+  - Source: `postmortems/2026-02-13T22-09/lead.md`
+  - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
+  - Category: `skill-update`
+
 ## Project
 
 _Changes to the app codebase in `main/`: code, docs, tests, features._
@@ -91,6 +117,16 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T21-39/planner-shared-track-row.md`
   - Category: `feature`
 
+- [ ] **Remove dead code: `ScanCancelled` and `DiskFull` error variants and `is_cancelled` method** — These unused error variants in `AppError` and the `is_cancelled` method trigger compiler warnings. Pre-existing dead code unrelated to recent features.
+  - Source: `postmortems/2026-02-13T22-09/lead.md`
+  - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
+  - Category: `dead-code`
+
+- [x] **Update test count in `main/CLAUDE.md` to 28** — Resolved by removing the hard-coded test count and specific file names from `main/CLAUDE.md`, since counts drift with every feature.
+  - Source: `postmortems/2026-02-13T22-09/lead.md`
+  - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
+  - Category: `documentation`
+
 ## Processed Postmortems
 
 _Postmortem files that have already been reviewed. Do not reprocess these._
@@ -105,3 +141,8 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-13T21-39/planner-shared-track-row.md`
 - `postmortems/2026-02-13T21-39/impl-library-stats.md`
 - `postmortems/2026-02-13T21-39/impl-shared-track-row.md`
+- `postmortems/2026-02-13T22-09/lead.md`
+- `postmortems/2026-02-13T22-09/planner-project-cleanup.md`
+- `postmortems/2026-02-13T22-09/planner-playlist-support.md`
+- `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
+- `postmortems/2026-02-13T22-09/impl-playlist-support.md`
