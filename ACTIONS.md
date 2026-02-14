@@ -86,8 +86,9 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T06-51/lead.md`
   - Category: `workflow`
 
-- [x] **Consider adding a UI testing skill or agent** — Visual/interaction bugs (canvas overflow blocking player controls, button icon confusion) can only be caught through manual testing. Created `/ui-test` skill that launches the Tauri app, navigates each page via AppleScript coordinate clicking, takes screenshots with `screencapture`, and uses Claude's vision to analyze for visual/layout bugs.
+- [x] **Consider adding a UI testing skill or agent** — Visual/interaction bugs (canvas overflow blocking player controls, button icon confusion) can only be caught through manual testing. Created `/ui-test` skill using Playwright against Vite dev server with Tauri IPC mocks (`page.addInitScript()`), screenshots all 6 pages with populated mock data, and uses Claude's vision to analyze for visual/layout bugs.
   - Source: `postmortems/2026-02-14T06-51/user-playback-visualization.md`
+  - Source: `postmortems/2026-02-14-ui-test-playwright.md`
   - Category: `workflow`
 
 - [x] **Note TypeScript strict typing for Web Audio API in plan instructions** — The playback visualization implementer hit a `Uint8Array<ArrayBufferLike>` vs `Uint8Array<ArrayBuffer>` typing issue with `getByteFrequencyData`/`getByteTimeDomainData`. Plans involving typed arrays or browser APIs should note explicit generic types needed for strict TypeScript.
@@ -212,6 +213,14 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T06-51/planner-duplicate-detection.md`
   - Category: `convention`
 
+- [ ] **Add selective page filtering to `/ui-test` Playwright test** — The skill advertises `/ui-test library` for testing specific pages, but the Playwright test (`main/e2e/ui-screenshots.spec.ts`) always screenshots all 6 pages. Add support for a `PAGES` environment variable or test parameter so the skill can run `PAGES=library,settings npx playwright test` to test only requested pages.
+  - Source: `postmortems/2026-02-14-ui-test-playwright.md`
+  - Category: `skill-update`
+
+- [ ] **Document: update `main/e2e/tauri-mocks.ts` when adding new IPC commands** — The Tauri IPC mock must be updated whenever a new `invoke()` command is added to the app, otherwise the corresponding page will show error/empty state during UI tests. The mock already logs `console.warn("[tauri-mock] unhandled command:")` for unhandled calls. Add a reminder to `main/CLAUDE.md` conventions or the IPC pattern section.
+  - Source: `postmortems/2026-02-14-ui-test-playwright.md`
+  - Category: `documentation`
+
 ## Processed Postmortems
 
 _Postmortem files that have already been reviewed. Do not reprocess these._
@@ -257,3 +266,4 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T09-50/planner-project-docs.md`
 - `postmortems/2026-02-14T09-50/impl-project-docs.md`
 - `postmortems/2026-02-14T09-50/lead.md`
+- `postmortems/2026-02-14-ui-test-playwright.md`
