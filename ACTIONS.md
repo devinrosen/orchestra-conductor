@@ -125,7 +125,7 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T09-50/lead.md`
   - Category: `workflow`
 
-- [ ] **Add "Scope" indicator (S/M/L) to plan template** — For small features (single-file UI changes), the Dead Code and Known Risks sections feel redundant but are quick to fill. Adding a scope indicator (Small/Medium/Large) to PLAN.md would help the lead gauge complexity at a glance during plan review. Consider making Dead Code and Known Risks optional for S-scope plans.
+- [x] **Add "Scope" indicator (S/M/L) to plan template** — For small features (single-file UI changes), the Dead Code and Known Risks sections feel redundant but are quick to fill. Adding a scope indicator (Small/Medium/Large) to PLAN.md would help the lead gauge complexity at a glance during plan review. Consider making Dead Code and Known Risks optional for S-scope plans.
   - Source: `postmortems/2026-02-14T13-19/planner-split-library.md`
   - Source: `postmortems/2026-02-14T13-19/lead.md`
   - Category: `workflow`
