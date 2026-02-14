@@ -33,6 +33,8 @@ Spawn one **planner** per feature in parallel. Critical rules:
   - The feature description from FEATURES.md
   - Instruction to read `CLAUDE.md` in their worktree
   - Instruction to **only research and write PLAN.md** — no implementation
+  - Instruction that PLAN.md must include a **Dead Code** section listing any existing functions that become unused as a result of the plan's changes (so they can be removed during implementation)
+  - Instruction that PLAN.md must include a **Test Cases** section specifying exact test scenarios (and optionally skeleton test code) for new functions and commands
   - Instruction to write a postmortem before finishing (see Postmortem section below)
   - Instruction to send a message to the lead when PLAN.md is complete
 
@@ -54,6 +56,7 @@ For each approved plan, spawn one **implementer**:
   - Instruction to follow the plan strictly
   - Instruction to run `cargo test` (from src-tauri/) and `npm run check` before committing
   - Instruction to mark the feature as `[implemented]` in `docs/FEATURES.md` (change `- [ ]` to `- [implemented]`) if it matches an entry. Do NOT mark as `[done]` — that happens after the user tests and merges.
+  - Instruction to stage specific files by name when committing — **never use `git add -A` or `git add .`** as it can pick up cache/build artifacts
   - Instruction to commit with a clear message on the current branch
   - Instruction to write a postmortem before finishing (see Postmortem section below)
   - Instruction to send a message to the lead with a summary when done
@@ -66,9 +69,10 @@ For each approved plan, spawn one **implementer**:
 
 1. Shut down all remaining teammates
 2. Delete the team
-3. Write the **lead postmortem** (see below)
-4. Present a final summary table to the user with branches, commits, and test results
-5. Remind the user they can merge with `/merge-feature <branch>` which handles the merge, worktree cleanup, directory cleanup, and FEATURES.md update automatically
+3. Read all agent postmortems from the session directory
+4. Write the **lead postmortem** (see below) — this is part of the wrap-up flow, not a separate manual step
+5. Present a final summary table to the user with branches, commits, and test results
+6. Remind the user they can merge with `/merge-feature <branch>` which handles the merge, worktree cleanup, directory cleanup, and FEATURES.md update automatically
 
 ## Postmortem Structure
 
