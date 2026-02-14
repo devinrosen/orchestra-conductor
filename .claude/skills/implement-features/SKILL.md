@@ -23,9 +23,9 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
 
 1. Read `main/docs/FEATURES.md` and match requested features
 2. Read `ACTIONS.md` and check for pending project-level actions (items under `## Project` that are unchecked).
-3. **Interactive feature selection** — Use `AskUserQuestion` to present two sequential interactive menus:
-   - **First question**: Multi-select of available features (status `[ ]` from FEATURES.md). Each option label is the feature name, description is a one-line summary. If the user passed feature names as arguments, skip this menu and use those.
-   - **Second question**: Multi-select of pending project actions from ACTIONS.md (if any exist). Each option label is the action name, description is a one-line summary. Include a "None" option.
+3. **Interactive feature selection** — Use `AskUserQuestion` to present multi-select menus. The tool supports up to 4 questions (each with 2-4 options) per call, so organize by section:
+   - **One question per FEATURES.md section** with available features (status `[ ]`). Each option label is the feature name, description is a one-line summary. Group sections into calls of up to 4 questions each. Skip sections with no available features. If the user passed feature names as arguments, skip the feature menus and use those.
+   - **Separate call for project actions**: Multi-select of pending project actions from ACTIONS.md (if any exist). Each option label is the action name, description is a one-line summary. Include a "None" option.
 4. **Pre-check cleanup items** — If the user chose to bundle cleanup actions, verify each one is still relevant before creating a worktree. For each unchecked project action, run a quick grep in `main/` to check if the target symbol/file still exists (e.g., `grep -r "get_tracks_by_artists" main/src-tauri/`). Mark any already-resolved items as `[x]` in `ACTIONS.md` with a note, and drop them from the cleanup bundle. Report what was dropped to the user.
 5. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
 6. Create a team using the timestamp (e.g., `feature-impl-2026-02-13T15-04`)
@@ -136,3 +136,4 @@ The team lead writes `postmortems/<timestamp>/lead.md` after all agents are shut
 - When selecting features to work on, skip anything that is not `[ ]` (not started)
 - Pre-check cleanup ACTIONS.md items with grep before creating worktrees — in one session, 4 of 7 items were already resolved, wasting planner time
 - Always use `AskUserQuestion` with multi-select for feature and action selection — never just list them in text. Interactive menus are faster and clearer for the user
+- Feature selection must be organized by FEATURES.md section (one question per section) — the tool limits each question to 4 options, so cramming all features into one question silently drops features. Use one `AskUserQuestion` call with up to 4 section-questions, then a separate call for ACTIONS.md items
