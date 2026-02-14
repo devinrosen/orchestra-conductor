@@ -78,6 +78,10 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
   - Category: `skill-update`
 
+- [x] **Mark ACTIONS.md items done when completed as part of another task** — Actions A (COALESCE docs) and D (track_from_row) were completed in a prior session but never checked off in ACTIONS.md, causing the next planner to re-investigate them. Add a step in the `/implement-features` wrap-up phase or `/merge-feature` skill to check off any ACTIONS.md items that were resolved by the session's work.
+  - Source: `postmortems/2026-02-13T23-13/lead.md`
+  - Category: `workflow`
+
 ## Project
 
 _Changes to the app codebase in `main/`: code, docs, tests, features._
@@ -127,6 +131,16 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
   - Category: `documentation`
 
+- [ ] **Remove unused tree CSS from `AlbumListView.svelte`** — After the AlbumHeader extraction, `.tree-toggle`, `.chevron`, `.chevron.expanded`, `.count` CSS rules are unused in AlbumListView (it has no non-album toggles), producing 5 Svelte unused-selector warnings. Remove them.
+  - Source: `postmortems/2026-02-13T23-13/impl-project-cleanup.md`
+  - Source: `postmortems/2026-02-13T23-13/lead.md`
+  - Category: `dead-code`
+
+- [ ] **Extract shared tree CSS into a shared stylesheet or component** — The tree CSS (`.tree-toggle`, `.tree-toggle:hover`, `.chevron`, `.chevron.expanded`, `.count`, `.children`) is duplicated across TreeView, GenreTreeView, and FolderTreeView (3 components). Consider extracting into a global stylesheet or a base tree CSS file.
+  - Source: `postmortems/2026-02-13T23-13/planner-project-cleanup.md`
+  - Source: `postmortems/2026-02-13T23-13/impl-project-cleanup.md`
+  - Category: `refactor`
+
 ## Processed Postmortems
 
 _Postmortem files that have already been reviewed. Do not reprocess these._
@@ -146,3 +160,6 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-13T22-09/planner-playlist-support.md`
 - `postmortems/2026-02-13T22-09/impl-project-cleanup.md`
 - `postmortems/2026-02-13T22-09/impl-playlist-support.md`
+- `postmortems/2026-02-13T23-13/lead.md`
+- `postmortems/2026-02-13T23-13/planner-project-cleanup.md`
+- `postmortems/2026-02-13T23-13/impl-project-cleanup.md`

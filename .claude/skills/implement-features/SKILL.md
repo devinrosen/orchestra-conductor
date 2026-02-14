@@ -83,7 +83,8 @@ For each approved plan, spawn one **implementer**:
 2. Delete the team
 3. Read all agent postmortems from the session directory
 4. Write the **lead postmortem** (see below) — this is part of the wrap-up flow, not a separate manual step
-5. Present a final summary table to the user with branches, commits, and test results
+5. Check `ACTIONS.md` for any items that were resolved by this session's work (including items the planners discovered were already done). Mark them `[x]`.
+6. Present a final summary table to the user with branches, commits, and test results
 6. Remind the user they can merge with `/merge-feature <branch>` which handles the merge, worktree cleanup, directory cleanup, and FEATURES.md update automatically
 
 ## Postmortem Structure
