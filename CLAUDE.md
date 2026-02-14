@@ -3,7 +3,7 @@
 This is the orchestration workspace for the music-management app. It contains:
 
 - `main/` — the primary repository (Tauri v2 app: Rust backend + Svelte 5 frontend)
-- `feat-<slug>/` — git worktrees for feature branches, one per feature
+- `feat-<slug>/` or `fix-<slug>/` — git worktrees for feature and fix branches
 
 ## Architecture
 
@@ -34,7 +34,7 @@ Each teammate should be assigned to ONE worktree. Include in their spawn prompt:
 
 1. Read `main/docs/FEATURES.md` for the feature list
 2. Create a worktree per selected feature
-3. Spawn a planning teammate per worktree with plan approval required
+3. Spawn a planning teammate per worktree in default mode (not plan mode — plan mode prevents writing PLAN.md)
 4. Each planner researches the codebase in their worktree and writes `PLAN.md`
 5. Lead reviews and approves/rejects plans before implementation
 
@@ -47,12 +47,7 @@ Each teammate should be assigned to ONE worktree. Include in their spawn prompt:
 
 ### Merging
 
-When a feature is complete:
-```bash
-cd main && git merge feat/<slug>
-git worktree remove ../feat-<slug>
-git branch -d feat/<slug>
-```
+Use `/merge-feature <slug>` to merge, clean up worktrees/branches, and update FEATURES.md.
 
 ## Postmortem Review
 
