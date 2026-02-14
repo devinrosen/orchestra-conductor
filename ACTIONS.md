@@ -125,6 +125,11 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T09-50/lead.md`
   - Category: `workflow`
 
+- [ ] **Add "Scope" indicator (S/M/L) to plan template** — For small features (single-file UI changes), the Dead Code and Known Risks sections feel redundant but are quick to fill. Adding a scope indicator (Small/Medium/Large) to PLAN.md would help the lead gauge complexity at a glance during plan review. Consider making Dead Code and Known Risks optional for S-scope plans.
+  - Source: `postmortems/2026-02-14T13-19/planner-split-library.md`
+  - Source: `postmortems/2026-02-14T13-19/lead.md`
+  - Category: `workflow`
+
 ## Project
 
 _Changes to the app codebase in `main/`: code, docs, tests, features._
@@ -221,6 +226,12 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14-ui-test-playwright.md`
   - Category: `documentation`
 
+- [ ] **Fix 2 pre-existing `npm run check` a11y warnings** — `Settings.svelte:44` has `a11y_label_has_associated_control` (form label not associated with a control) and `DuplicateReport.svelte:135` has `a11y_interactive_supports_focus` (dialog role element missing tabindex). Both are pre-existing and unrelated to recent features. Fix them to get `npm run check` to 0 warnings.
+  - Source: `postmortems/2026-02-14T13-19/lead.md`
+  - Source: `postmortems/2026-02-14T13-19/impl-split-library.md`
+  - Source: `postmortems/2026-02-14T13-19/impl-equalizer.md`
+  - Category: `code-quality`
+
 ## Processed Postmortems
 
 _Postmortem files that have already been reviewed. Do not reprocess these._
@@ -267,3 +278,8 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T09-50/impl-project-docs.md`
 - `postmortems/2026-02-14T09-50/lead.md`
 - `postmortems/2026-02-14-ui-test-playwright.md`
+- `postmortems/2026-02-14T13-19/planner-split-library.md`
+- `postmortems/2026-02-14T13-19/planner-equalizer.md`
+- `postmortems/2026-02-14T13-19/impl-split-library.md`
+- `postmortems/2026-02-14T13-19/impl-equalizer.md`
+- `postmortems/2026-02-14T13-19/lead.md`
