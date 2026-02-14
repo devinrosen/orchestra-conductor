@@ -82,7 +82,7 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
 
 _Changes to the app codebase in `main/`: code, docs, tests, features._
 
-- [ ] **Document `COALESCE(album_artist, artist, 'Unknown Artist')` as canonical artist grouping in `main/CLAUDE.md`** — This SQL expression is the canonical way artists are grouped throughout the codebase (device sync, library queries, UI). It appears in multiple places and any feature touching artist/album grouping needs to use it consistently. Add it to the conventions section of `main/CLAUDE.md`.
+- [x] **Document `COALESCE(album_artist, artist, 'Unknown Artist')` as canonical artist grouping in `main/CLAUDE.md`** — This SQL expression is the canonical way artists are grouped throughout the codebase (device sync, library queries, UI). It appears in multiple places and any feature touching artist/album grouping needs to use it consistently. Add it to the conventions section of `main/CLAUDE.md`.
   - Source: `postmortems/2026-02-13-sync-by-album/planner-sync-by-album.md`
   - Source: `postmortems/2026-02-13-sync-by-album/lead.md`
   - Source: `postmortems/2026-02-13-full-session.md`
@@ -97,7 +97,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T21-39/lead.md`
   - Category: `dead-code`
 
-- [ ] **Extract `track_from_row()` helper in `library_repo.rs`** — The Track row mapping (`row.get(0)?, row.get(1)?, ...`) is duplicated 6-7 times across query functions. A `track_from_row(row: &Row) -> Result<Track>` helper would centralize this and make adding columns (like `bitrate`) much easier. High priority — flagged by 4 of 5 postmortems.
+- [x] **Extract `track_from_row()` helper in `library_repo.rs`** — The Track row mapping (`row.get(0)?, row.get(1)?, ...`) is duplicated 6-7 times across query functions. A `track_from_row(row: &Row) -> Result<Track>` helper would centralize this and make adding columns (like `bitrate`) much easier. High priority — flagged by 4 of 5 postmortems.
   - Source: `postmortems/2026-02-13T21-39/lead.md`
   - Source: `postmortems/2026-02-13T21-39/planner-library-stats.md`
   - Source: `postmortems/2026-02-13T21-39/impl-library-stats.md`
@@ -113,7 +113,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-13T21-39/impl-shared-track-row.md`
   - Category: `dead-code`
 
-- [ ] **Extract shared album header component** — The album header pattern (expand/collapse toggle + play album button + edit album button) is duplicated across TreeView, AlbumListView, and GenreTreeView with minor variations. Consider extracting into a shared component in a future feature.
+- [x] **Extract shared album header component** — The album header pattern (expand/collapse toggle + play album button + edit album button) is duplicated across TreeView, AlbumListView, and GenreTreeView with minor variations. Consider extracting into a shared component in a future feature.
   - Source: `postmortems/2026-02-13T21-39/planner-shared-track-row.md`
   - Category: `feature`
 
