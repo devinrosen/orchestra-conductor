@@ -1,4 +1,10 @@
-# review-postmortems
+---
+name: review-postmortems
+description: Review unprocessed session postmortems and extract actionable items into ACTIONS.md.
+disable-model-invocation: true
+---
+
+# /review-postmortems
 
 Review session postmortems, extract actionable items, and sort them by scope.
 

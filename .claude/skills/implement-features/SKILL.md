@@ -1,3 +1,10 @@
+---
+name: implement-features
+description: Plan and implement features using an agent team with isolated git worktrees. Use when starting a new development session to build features from FEATURES.md.
+disable-model-invocation: true
+argument-hint: [feature-names]
+---
+
 # /implement-features
 
 Plan and implement features using an agent team with isolated git worktrees.
@@ -16,12 +23,14 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
 
 1. Read `main/docs/FEATURES.md` and match requested features
 2. Read `ACTIONS.md` and check for pending project-level actions (items under `## Project` that are unchecked). If any exist, surface them to the user and ask if they want to bundle any into this session as additional work items.
-3. Create a team (e.g., `feature-impl-YYYY-MM-DD`)
-4. For each feature, create a git worktree:
+3. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
+4. Create a team using the timestamp (e.g., `feature-impl-2026-02-13T15-04`)
+5. For each feature, create a git worktree and install dependencies:
    ```bash
    cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
+   npm install --prefix ../feat-<slug>
    ```
-5. Create a session postmortem directory: `postmortems/YYYY-MM-DD-<team-name>/`
+6. Create a session postmortem directory: `postmortems/<timestamp>/` (e.g., `postmortems/2026-02-13T15-04/`)
 
 ### Phase 2: Planning
 
@@ -78,11 +87,11 @@ For each approved plan, spawn one **implementer**:
 
 ### Agent Postmortems (planners and implementers)
 
-Each agent writes their postmortem to `postmortems/YYYY-MM-DD-<team-name>/<agent-name>.md` as their **last action before signaling completion**. Include this in every agent's spawn prompt:
+Each agent writes their postmortem to `postmortems/<timestamp>/<agent-name>.md` as their **last action before signaling completion**. Include this in every agent's spawn prompt:
 
 ```
 Before you send your completion message, write a postmortem file to:
-postmortems/YYYY-MM-DD-<team-name>/<your-name>.md
+postmortems/<timestamp>/<your-name>.md
 
 Include these sections:
 - **Task**: What were you asked to do?
@@ -95,7 +104,7 @@ Include these sections:
 
 ### Lead Postmortem
 
-The team lead writes `postmortems/YYYY-MM-DD-<team-name>/lead.md` after all agents are shut down. Include:
+The team lead writes `postmortems/<timestamp>/lead.md` after all agents are shut down. Include:
 
 - **Goal**: What was the session trying to accomplish?
 - **Timeline**: Chronological summary of key events

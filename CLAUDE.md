@@ -19,6 +19,7 @@ From this workspace root:
 
 ```bash
 cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
+npm install --prefix ../feat-<slug>
 ```
 
 ### Spawning teammates
@@ -55,13 +56,9 @@ git branch -d feat/<slug>
 
 ## Postmortem Review
 
-Session postmortems collect in `postmortems/`. Use the `review-postmortems` agent to extract actionable items:
+Session postmortems collect in `postmortems/`. Use `/review-postmortems` to extract actionable items.
 
-```
-Spawn the review-postmortems agent to review unprocessed postmortems.
-```
-
-The agent reads unprocessed postmortems, extracts actions, classifies them as **orchestration** (workflow/skill/process changes) or **project** (code/docs/test changes in `main/`), and appends them to `ACTIONS.md`.
+The skill reads unprocessed postmortems, extracts actions, classifies them as **orchestration** (workflow/skill/process changes) or **project** (code/docs/test changes in `main/`), and appends them to `ACTIONS.md`.
 
 - `ACTIONS.md` — the living backlog of extracted actions, organized by scope
 - Run the agent after each session or before starting a new planning phase

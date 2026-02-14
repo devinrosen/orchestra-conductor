@@ -1,3 +1,10 @@
+---
+name: merge-feature
+description: Merge a feature or fix branch into main, clean up the worktree, and update FEATURES.md. Use when a feature implementation is complete and tested.
+disable-model-invocation: true
+argument-hint: [branch-name]
+---
+
 # /merge-feature
 
 Merge a feature or fix branch into main, clean up the worktree, and update FEATURES.md.
