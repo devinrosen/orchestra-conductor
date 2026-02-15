@@ -130,6 +130,22 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T13-19/lead.md`
   - Category: `workflow`
 
+- [x] **Require plans to grep for all affected locations when adding model fields** — When a plan adds a field to a data model (e.g., `rating` to `Track`), it should grep for all files that construct or map that model, not just the primary repo file. The track ratings plan missed `playlist_repo.rs` (inline Track mapping) and `scanner/metadata.rs` (Track construction) because it only searched `library_repo.rs`. Include the grep command in the plan for implementer verification.
+  - Source: `postmortems/2026-02-14T19-36/impl-track-ratings.md`
+  - Source: `postmortems/2026-02-14T19-36/lead.md`
+  - Category: `workflow`
+
+- [x] **Require plans to flag HTML nesting constraints for interactive elements** — Plans that add interactive elements (buttons, links) inside existing interactive elements should explicitly flag potential nesting issues. The track ratings plan placed `<button>` stars inside a `.track-node` `<button>`, causing 3 a11y warnings. The implementer had to restructure the HTML.
+  - Source: `postmortems/2026-02-14T19-36/impl-track-ratings.md`
+  - Source: `postmortems/2026-02-14T19-36/lead.md`
+  - Category: `workflow`
+
+- [x] **Allow mixed fast-track and standard mode in the same session** — When a session has both S-scope cleanup items and larger features, the S-scope items could be fast-tracked (single agent) while the larger features use standard two-phase mode. Currently the skill evaluates ALL selected work together, so S-scope items bundled with larger features always get the slower two-phase treatment. Both a11y agents independently noted the overhead was unnecessary.
+  - Source: `postmortems/2026-02-14T19-36/planner-a11y-warnings.md`
+  - Source: `postmortems/2026-02-14T19-36/impl-a11y-warnings.md`
+  - Source: `postmortems/2026-02-14T19-36/lead.md`
+  - Category: `skill-update`
+
 ## Project
 
 _Changes to the app codebase in `main/`: code, docs, tests, features._
@@ -232,6 +248,22 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T13-19/impl-equalizer.md`
   - Category: `code-quality`
 
+- [ ] **Refactor `playlist_repo.rs` to reuse `track_from_row` from `library_repo.rs`** — `playlist_repo.rs` has its own inline Track row mapping instead of reusing the `pub(crate) track_from_row` function from `library_repo.rs`. Every Track field addition now requires updating both files independently. The `favorite_repo.rs` already uses the shared version. Updating `playlist_repo.rs` would complete the consolidation.
+  - Source: `postmortems/2026-02-14T19-36/impl-track-ratings.md`
+  - Source: `postmortems/2026-02-14T19-36/lead.md`
+  - Source: `postmortems/2026-02-14T20-13/planner-favorites.md`
+  - Source: `postmortems/2026-02-14T20-13/lead.md`
+  - Category: `refactor`
+
+- [ ] **Document `track_from_row` positional column convention in `main/CLAUDE.md`** — `track_from_row` uses positional indices (0-18) for column mapping. Adding a column requires updating the index in the function AND ensuring all SELECT statements list columns in exactly the same order. This is a common source of bugs when extending the Track model. Document this pattern in the conventions section.
+  - Source: `postmortems/2026-02-14T19-36/planner-track-ratings.md`
+  - Category: `documentation`
+
+- [ ] **Add "Patterns to Follow" section to `main/CLAUDE.md`** — Document the `model → repo → command → store → page` pipeline as the standard extension pattern for new features. The planner noted this is the main pattern agents follow, and having it explicitly documented would save research time for future planners.
+  - Source: `postmortems/2026-02-14T20-13/planner-favorites.md`
+  - Source: `postmortems/2026-02-14T20-13/lead.md`
+  - Category: `documentation`
+
 ## Processed Postmortems
 
 _Postmortem files that have already been reviewed. Do not reprocess these._
@@ -283,3 +315,12 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T13-19/impl-split-library.md`
 - `postmortems/2026-02-14T13-19/impl-equalizer.md`
 - `postmortems/2026-02-14T13-19/lead.md`
+- `postmortems/2026-02-14T19-36/planner-a11y-warnings.md`
+- `postmortems/2026-02-14T19-36/planner-track-ratings.md`
+- `postmortems/2026-02-14T19-36/impl-a11y-warnings.md`
+- `postmortems/2026-02-14T19-36/impl-track-ratings.md`
+- `postmortems/2026-02-14T19-36/lead.md`
+- `postmortems/2026-02-14T20-13/planner-favorites.md`
+- `postmortems/2026-02-14T20-13/impl-favorites.md`
+- `postmortems/2026-02-14T20-13/lead.md`
+- `postmortems/2026-02-14T20-13/user-favorites.md`

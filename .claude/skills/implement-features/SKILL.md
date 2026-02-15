@@ -38,25 +38,28 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
 
 ### Phase 1.5: Fast-Track Check
 
-After setup, evaluate whether the selected work qualifies for **fast-track mode** — a single agent that plans and implements in one pass, skipping separate planning and implementation phases.
+After setup, evaluate **each worktree independently** for fast-track eligibility. A session can mix fast-track and standard-mode worktrees.
 
-**Fast-track criteria** (ALL must be true):
+**Fast-track criteria** (ALL must be true for a given worktree):
 - Work is purely mechanical: documentation changes, dead code removal, import cleanup, convention updates, small bug fixes with obvious solutions
 - No architectural decisions or design choices required
 - Scope is small enough for one agent to hold in context (roughly ≤3 files changed)
 
-If fast-track criteria are met, ask the user:
-> "This looks like small cleanup work. Use fast-track mode (single agent plans + implements in one pass) or standard two-phase mode?"
+**Per-worktree evaluation:**
+1. Classify each worktree as **fast-track eligible** or **standard**
+2. If ANY worktrees are fast-track eligible, ask the user: "These items look like small cleanup work — use fast-track mode for them? [list items]. The remaining items will use standard two-phase mode."
+3. If ALL worktrees are fast-track eligible, ask: "This looks like small cleanup work. Use fast-track mode (single agent plans + implements in one pass) or standard two-phase mode?"
 
-**Fast-track flow:**
-1. Spawn one agent per worktree with `mode: "bypassPermissions"`
+**Fast-track flow** (for eligible worktrees only):
+1. Spawn one agent per fast-track worktree with `mode: "bypassPermissions"`
 2. Agent prompt includes all standard planner instructions PLUS implementation instructions
 3. Agent writes a brief PLAN.md (for the record), implements it immediately, runs tests, and commits
 4. Agent writes a postmortem and sends completion message
 5. Lead reviews the commit diff (not a separate plan review step)
-6. Skip Phase 2 and Phase 3 — go directly to Phase 4 (Wrap-Up)
 
-If fast-track criteria are NOT met, proceed with the standard two-phase workflow below.
+**Standard worktrees** proceed through Phase 2 (Planning) and Phase 3 (Implementation) as normal. Fast-track agents run in parallel with standard planners.
+
+All worktrees converge at Phase 4 (Wrap-Up).
 
 ### Phase 2: Planning
 
@@ -80,6 +83,8 @@ Spawn one **planner** per feature in parallel. Critical rules:
   - Instruction that for plans involving **bulk replacements** (e.g., renaming a function across files, replacing hardcoded colors), the plan must include a **Verification** step: grep for remaining instances after the replacement pass to catch any that were missed.
   - Instruction that when documenting a new convention, if the planner discovers **existing code that violates it**, the plan must include a **Fix Existing Violations** section listing the specific files and values to fix — not just mention them as context.
   - Instruction that plans involving **TypeScript typed arrays or browser APIs** (Web Audio, Canvas, etc.) should note explicit generic types needed for strict TypeScript (e.g., `Uint8Array<ArrayBuffer>` not `Uint8Array<ArrayBufferLike>` for `getByteFrequencyData`).
+  - Instruction that when a plan **adds a field to a data model** (e.g., a new column on `Track`), the plan must grep for ALL files that construct or map that model — not just the primary repo file. Include the grep command in the plan so the implementer can verify completeness (e.g., `grep -rn 'Track {' src-tauri/src/` or `grep -rn 'has_album_art.*bitrate' src-tauri/src/`).
+  - Instruction that when a plan **adds interactive elements** (buttons, links, clickable spans) inside or adjacent to existing interactive elements, the plan must note potential **HTML nesting constraint** issues (e.g., `<button>` inside `<button>` is invalid HTML and triggers a11y warnings). Suggest the correct structure (e.g., sibling elements instead of nesting).
   - Instruction to write a postmortem before finishing (see Postmortem section below)
   - Instruction to send a message to the lead when PLAN.md is complete
 
@@ -171,3 +176,6 @@ The team lead writes `postmortems/<timestamp>/lead.md` after all agents are shut
 - Plans should be concise — extended deliberation sections (100+ lines exploring candidates) are less useful than a short "try A, fallback B" format
 - When documenting a convention, the plan should also fix existing violations — planners who discover violations should include them as action items, not just context
 - Plans should include a Scope indicator (S/M/L) so the lead can gauge complexity at a glance — S-scope plans can abbreviate Dead Code and Known Risks to a single line
+- When adding model fields, plans must grep for ALL files that construct/map the model — the track ratings plan missed playlist_repo.rs and scanner/metadata.rs by only searching library_repo.rs
+- Plans adding interactive elements near existing ones must flag HTML nesting constraints — nested buttons cause a11y warnings
+- Fast-track evaluation should be per-worktree, not all-or-nothing — S-scope cleanup items bundled with larger features were unnecessarily slow in two-phase mode
