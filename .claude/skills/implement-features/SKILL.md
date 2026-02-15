@@ -114,6 +114,15 @@ For each approved plan, spawn one **implementer**:
 **On receiving an implementer's completion message:**
 1. Mark the task as completed
 2. Shut down the implementer immediately
+3. Push the branch and create a draft PR:
+   ```bash
+   cd main && git push -u origin <branch>
+   ```
+   Then create the PR with `gh pr create` from `main/`:
+   - Title: the feature name
+   - Body: plan summary (from PLAN.md Scope + key sections), test results, and a link to the postmortem path
+   - Use `--draft` so it's clear the PR is pending user review
+   - Base branch: `main`
 
 ### Phase 4: Wrap-Up
 
@@ -122,8 +131,8 @@ For each approved plan, spawn one **implementer**:
 3. Read all agent postmortems from the session directory
 4. Write the **lead postmortem** (see below) — this is part of the wrap-up flow, not a separate manual step
 5. Check `ACTIONS.md` for any items that were resolved by this session's work (including items the planners discovered were already done). Mark them `[x]`.
-6. Present a final summary table to the user with branches, commits, and test results
-6. Remind the user they can merge with `/merge-feature <branch>` which handles the merge, worktree cleanup, directory cleanup, and FEATURES.md update automatically
+6. Present a final summary table to the user with branches, commits, test results, and PR links
+7. Remind the user they can merge with `/merge-feature <branch>` which handles the PR merge, worktree cleanup, directory cleanup, and FEATURES.md update automatically
 
 ## Postmortem Structure
 

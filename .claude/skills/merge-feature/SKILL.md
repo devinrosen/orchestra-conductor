@@ -49,12 +49,19 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
 
 ### Step 3: Merge
 
-1. From `main/`, run `git merge <branch>`
-2. If there are merge conflicts:
-   - Show the conflicted files to the user
-   - Resolve each conflict, keeping changes from both sides where appropriate
-   - Show the user what you resolved and ask for confirmation before completing the merge commit
-3. If the merge is clean, it completes automatically
+1. From `main/`, check if a GitHub PR exists for the branch: `gh pr view <branch> --json number,state`
+2. **If a PR exists and is open:**
+   - Merge via GitHub: `gh pr merge <branch> --merge --delete-branch` (from `main/`)
+   - This merges the PR, deletes the remote branch, and records the merge on GitHub
+   - Then pull locally: `git pull` (from `main/`)
+3. **If no PR exists (or it was already closed):**
+   - Fall back to local merge: `git merge <branch>` (from `main/`)
+   - If there are merge conflicts:
+     - Show the conflicted files to the user
+     - Resolve each conflict, keeping changes from both sides where appropriate
+     - Show the user what you resolved and ask for confirmation before completing the merge commit
+   - If the merge is clean, it completes automatically
+   - Push the merge to remote: `git push` (from `main/`)
 
 ### Step 4: Clean up git worktree
 
@@ -62,7 +69,8 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
 2. If a worktree exists, remove it: `git worktree remove <path>`
 3. If the worktree directory still exists on disk (stale), remove it: `rm -rf <path>`
 4. Run `git worktree prune` to clean up stale references
-5. Delete the branch: `git branch -d <branch>`
+5. Delete the local branch if it still exists: `git branch -d <branch>`
+6. Delete the remote branch if it still exists: `git push origin --delete <branch>` (skip if `gh pr merge --delete-branch` already removed it)
 
 ### Step 5: Clean up the orchestration directory
 
@@ -72,8 +80,9 @@ Branch name can be the full branch name (e.g., `feat/eject-device-button`) or ju
 ### Step 6: Summary
 
 Report:
-- Branch merged: `<branch>` → `main`
+- Branch merged: `<branch>` → `main` (via PR #N / local merge)
 - Conflicts: none / resolved (list files)
 - Worktree cleaned: yes/no
 - Directory cleaned: yes/no
+- Remote branch cleaned: yes/no
 - FEATURES.md updated: `<feature title>` → `[done]` / no match / already done

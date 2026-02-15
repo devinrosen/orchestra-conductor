@@ -40,23 +40,32 @@ Branch name can be the full branch name (e.g., `feat/track-ratings`) or just the
 5. If no match is found (e.g., a fix branch), skip
 6. Do NOT commit the FEATURES.md change — leave it as an unstaged modification for the user to review
 
-### Step 4: Clean up git worktree
+### Step 4: Close any open PR
+
+1. Check if a GitHub PR exists for the branch: `gh pr view <branch> --json number,state` (from `main/`)
+2. If a PR exists and is open, close it without merging: `gh pr close <branch>` (from `main/`)
+3. If no PR exists, skip
+
+### Step 5: Clean up git worktree
 
 1. Run `git worktree list` to find any worktree associated with the branch
 2. If a worktree exists, remove it: `git worktree remove --force <path>`
 3. If the worktree directory still exists on disk (stale), remove it: `rm -rf <path>`
 4. Run `git worktree prune` to clean up stale references
-5. Force-delete the branch: `git branch -D <branch>`
+5. Force-delete the local branch: `git branch -D <branch>`
+6. Delete the remote branch if it exists: `git push origin --delete <branch>`
 
-### Step 5: Clean up the orchestration directory
+### Step 6: Clean up the orchestration directory
 
 1. Check if a `feat-<slug>/` or `fix-<slug>/` directory exists at the orchestration workspace root (`../` relative to `main/`)
 2. If it exists, remove it: `rm -rf <path>`
 
-### Step 6: Summary
+### Step 7: Summary
 
 Report:
 - Branch deleted: `<branch>` (N commits discarded)
+- PR closed: #N / no PR
 - Worktree cleaned: yes/no
 - Directory cleaned: yes/no
+- Remote branch cleaned: yes/no
 - FEATURES.md reset: `<feature title>` → `[ ]` / no match / not changed
