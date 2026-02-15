@@ -226,7 +226,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14-ui-test-playwright.md`
   - Category: `documentation`
 
-- [ ] **Fix 2 pre-existing `npm run check` a11y warnings** — `Settings.svelte:44` has `a11y_label_has_associated_control` (form label not associated with a control) and `DuplicateReport.svelte:135` has `a11y_interactive_supports_focus` (dialog role element missing tabindex). Both are pre-existing and unrelated to recent features. Fix them to get `npm run check` to 0 warnings.
+- [x] **Fix 2 pre-existing `npm run check` a11y warnings** — `Settings.svelte:44` has `a11y_label_has_associated_control` (form label not associated with a control) and `DuplicateReport.svelte:135` has `a11y_interactive_supports_focus` (dialog role element missing tabindex). Both are pre-existing and unrelated to recent features. Fix them to get `npm run check` to 0 warnings.
   - Source: `postmortems/2026-02-14T13-19/lead.md`
   - Source: `postmortems/2026-02-14T13-19/impl-split-library.md`
   - Source: `postmortems/2026-02-14T13-19/impl-equalizer.md`
