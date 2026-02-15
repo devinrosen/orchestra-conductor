@@ -9,9 +9,9 @@ This is the orchestration workspace for the Orchestra app. It contains:
 
 See `main/CLAUDE.md` for full app architecture, build commands, and conventions.
 
-## Agent Team Workflow
+## Subagent Workflow
 
-This workspace is designed for agent teams. The team lead runs from this directory and coordinates teammates working in isolated git worktrees.
+This workspace uses subagents (not agent teams) for parallel development. The lead runs from this directory and orchestrates subagents working in isolated git worktrees.
 
 ### Creating worktrees
 
@@ -22,28 +22,21 @@ cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<
 npm install --prefix ../feat-<slug>
 ```
 
-### Spawning teammates
-
-Each teammate should be assigned to ONE worktree. Include in their spawn prompt:
-- The full path to their worktree: `./feat-<slug>/`
-- The feature they're implementing (title + description from `main/docs/FEATURES.md`)
-- Instruction to read `CLAUDE.md` in their worktree for project context
-- Their specific role (planner or implementer)
-
-### Planning phase
+### Planning phase (parallel subagents)
 
 1. Read `main/docs/FEATURES.md` for the feature list
 2. Create a worktree per selected feature
-3. Spawn a planning teammate per worktree in default mode (not plan mode — plan mode prevents writing PLAN.md)
-4. Each planner researches the codebase in their worktree and writes `PLAN.md`
-5. Lead reviews and approves/rejects plans before implementation
+3. Spawn one planning subagent per worktree in parallel (via `Task` tool with `run_in_background: true`)
+4. Each planner researches the codebase and writes `PLAN.md` with Scope, Layer, Dead Code, Test Cases, and Known Risks sections
+5. Lead reviews and approves/rejects each plan
 
-### Implementation phase
+### Implementation phase (domain-aware subagents)
 
-1. For each approved plan, spawn an implementation teammate in the same worktree
-2. Implementer reads `PLAN.md` and follows it strictly
-3. Implementer runs `cargo test` (from src-tauri/) and `npm run check` before committing
-4. Lead verifies results after implementation
+Plans include a `Layer` field (`backend-only`, `frontend-only`, `cross-layer`, `full-stack`) that determines which subagents to spawn:
+- **Backend-only**: Rust subagent (works in `src-tauri/`, runs `cargo test`)
+- **Frontend-only**: Svelte subagent (works in `src/`, runs `npm run check`)
+- **Cross-layer**: Rust subagent first, then Svelte subagent (sequential)
+- **Full-stack**: single subagent handling both layers
 
 ### Merging
 

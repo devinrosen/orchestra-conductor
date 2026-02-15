@@ -4,16 +4,7 @@ Orchestration workspace for coordinating parallel agent development on [Orchestr
 
 ## Requirements
 
-- [Claude Code](https://claude.ai/code) — this workspace is driven by Claude Code skills and agent teams
-- [Agent teams](https://code.claude.com/docs/en/agent-teams) enabled — experimental and off by default. Add to your `settings.json`:
-
-  ```json
-  {
-    "env": {
-      "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-    }
-  }
-  ```
+- [Claude Code](https://claude.ai/code) — this workspace is driven by Claude Code skills and subagents
 
 ## Getting Started
 
@@ -21,7 +12,7 @@ Clone this repo and run `/init` in Claude Code to clone the [Orchestra](https://
 
 ## Workflow
 
-This workspace uses [Claude Code](https://claude.ai/code) skills to run a semi-autonomous development cycle. The user acts as a team lead — selecting work, reviewing plans and implementations, and merging results — while agent teams handle the research, planning, and coding in parallel.
+This workspace uses [Claude Code](https://claude.ai/code) skills to run a semi-autonomous development cycle. The user acts as lead — selecting work, reviewing plans and implementations, and merging results — while subagents handle the research, planning, and coding.
 
 ### 1. Select and build — `/implement-features`
 
@@ -29,12 +20,12 @@ Start a session by running `/implement-features`. The skill:
 
 - Presents features from `main/docs/FEATURES.md` and pending cleanup actions from `ACTIONS.md` as interactive menus for you to select from
 - Creates an isolated git worktree per feature (e.g., `feat-play-queue/`)
-- Spawns **planner agents** in parallel — each researches the codebase in their worktree and writes a `PLAN.md`
+- Spawns **planning subagents** in parallel — each researches the codebase in their worktree and writes a `PLAN.md`
 - Presents each plan for your approval
-- Spawns **implementer agents** for approved plans — each follows the plan, runs tests (`cargo test`, `npm run check`), and commits
-- Wraps up with a summary of branches, commits, and test results
+- Spawns **domain-aware implementation subagents** for approved plans — Rust subagent for backend, Svelte subagent for frontend, or both sequentially for cross-layer features
+- Wraps up with a summary of branches, commits, test results, and PR links
 
-Small cleanup tasks can use **fast-track mode**, where a single agent plans and implements in one pass.
+Small cleanup tasks can use **fast-track mode**, where a single subagent plans and implements in one pass.
 
 ### 2. Review branches
 
@@ -68,7 +59,7 @@ When a branch looks good, run `/merge-feature <slug>`. The skill:
 
 ### 4. Extract learnings — `/review-postmortems`
 
-Every agent (planners, implementers, and the lead) writes a postmortem at the end of each session. These collect in `postmortems/`. Running `/review-postmortems`:
+The lead writes a session postmortem at the end of each session, synthesizing feedback from subagent completion reports. These collect in `postmortems/`. Running `/review-postmortems`:
 
 - Reads all unprocessed postmortems
 - Extracts actionable items (bug fixes, dead code, workflow improvements, documentation gaps)
