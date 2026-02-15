@@ -12,6 +12,17 @@ postmortems/           # Session postmortems
 ACTIONS.md             # Backlog of extracted actions from postmortems
 ```
 
+## Getting Started
+
+The `main/` directory (the Orchestra app repo) is not included in this repository. After cloning, set it up:
+
+```bash
+git clone git@github.com:devinrosen/orchestra.git main
+npm install --prefix main
+```
+
+Or if using Claude Code, run `/init`.
+
 ## About Orchestra
 
 Orchestra is a desktop app for managing music libraries and syncing them to external devices. Key capabilities:
