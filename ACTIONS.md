@@ -146,6 +146,11 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T19-36/lead.md`
   - Category: `skill-update`
 
+- [ ] **Note in agent instructions that PLAN.md is gitignored** — PLAN.md is in `.gitignore`, so `git add PLAN.md` will fail silently or error. Agent spawn prompts or the `/implement-features` skill should mention that PLAN.md is for the agent's own reference only and won't be committed. This avoids a failed first commit attempt when agents try to include it.
+  - Source: `postmortems/2026-02-14T21-16/fast-track-cleanup.md`
+  - Source: `postmortems/2026-02-14T21-16/lead.md`
+  - Category: `workflow`
+
 ## Project
 
 _Changes to the app codebase in `main/`: code, docs, tests, features._
@@ -248,14 +253,14 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T13-19/impl-equalizer.md`
   - Category: `code-quality`
 
-- [ ] **Refactor `playlist_repo.rs` to reuse `track_from_row` from `library_repo.rs`** — `playlist_repo.rs` has its own inline Track row mapping instead of reusing the `pub(crate) track_from_row` function from `library_repo.rs`. Every Track field addition now requires updating both files independently. The `favorite_repo.rs` already uses the shared version. Updating `playlist_repo.rs` would complete the consolidation.
+- [x] **Refactor `playlist_repo.rs` to reuse `track_from_row` from `library_repo.rs`** — `playlist_repo.rs` has its own inline Track row mapping instead of reusing the `pub(crate) track_from_row` function from `library_repo.rs`. Every Track field addition now requires updating both files independently. The `favorite_repo.rs` already uses the shared version. Updating `playlist_repo.rs` would complete the consolidation.
   - Source: `postmortems/2026-02-14T19-36/impl-track-ratings.md`
   - Source: `postmortems/2026-02-14T19-36/lead.md`
   - Source: `postmortems/2026-02-14T20-13/planner-favorites.md`
   - Source: `postmortems/2026-02-14T20-13/lead.md`
   - Category: `refactor`
 
-- [ ] **Document `track_from_row` positional column convention in `main/CLAUDE.md`** — `track_from_row` uses positional indices (0-18) for column mapping. Adding a column requires updating the index in the function AND ensuring all SELECT statements list columns in exactly the same order. This is a common source of bugs when extending the Track model. Document this pattern in the conventions section.
+- [x] **Document `track_from_row` positional column convention in `main/CLAUDE.md`** — `track_from_row` uses positional indices (0-18) for column mapping. Adding a column requires updating the index in the function AND ensuring all SELECT statements list columns in exactly the same order. This is a common source of bugs when extending the Track model. Document this pattern in the conventions section.
   - Source: `postmortems/2026-02-14T19-36/planner-track-ratings.md`
   - Category: `documentation`
 
@@ -324,3 +329,5 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T20-13/impl-favorites.md`
 - `postmortems/2026-02-14T20-13/lead.md`
 - `postmortems/2026-02-14T20-13/user-favorites.md`
+- `postmortems/2026-02-14T21-16/fast-track-cleanup.md`
+- `postmortems/2026-02-14T21-16/lead.md`
