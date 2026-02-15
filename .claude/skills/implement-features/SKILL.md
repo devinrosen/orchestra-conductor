@@ -21,19 +21,18 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
 
 ### Phase 1: Setup
 
-1. Read `main/docs/FEATURES.md` and match requested features
-2. Read `ACTIONS.md` and check for pending project-level actions (items under `## Project` that are unchecked).
-3. **Interactive feature selection** — Use `AskUserQuestion` to present multi-select menus. The tool supports up to 4 questions (each with 2-4 options) per call, so organize by section:
-   - **One question per FEATURES.md section** with available features (status `[ ]`). Each option label is the feature name, description is a one-line summary. Group sections into calls of up to 4 questions each. Skip sections with no available features. If the user passed feature names as arguments, skip the feature menus and use those.
-   - **Separate call for project actions**: Multi-select of pending project actions from ACTIONS.md (if any exist). Each option label is the action name, description is a one-line summary. Include a "None" option.
-4. **Pre-check cleanup items** — If the user chose to bundle cleanup actions, verify each one is still relevant before creating a worktree. For each unchecked project action, run a quick grep in `main/` to check if the target symbol/file still exists. Mark any already-resolved items as `[x]` in `ACTIONS.md` with a note, and drop them from the cleanup bundle. Report what was dropped to the user.
-5. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
-6. For each feature, create a git worktree and install dependencies:
+1. **Gather open items** — Spawn a `haiku` subagent via `Task` tool to read `main/docs/FEATURES.md` and `ACTIONS.md`, then return only the open items (features with status `[ ]` grouped by section, unchecked actions by scope). This keeps the full files out of the lead's context. If the user passed feature names as arguments, skip straight to step 3.
+2. **Interactive feature selection** — Use `AskUserQuestion` to present multi-select menus from the subagent's results. The tool supports up to 4 questions (each with 2-4 options) per call, so organize by section:
+   - **One question per FEATURES.md section** with available features. Each option label is the feature name, description is a one-line summary. Group sections into calls of up to 4 questions each. Skip sections with no available features.
+   - **Separate call for project actions**: Multi-select of pending project actions (if any exist). Each option label is the action name, description is a one-line summary. Include a "None" option.
+3. **Pre-check cleanup items** — If the user chose to bundle cleanup actions, verify each one is still relevant before creating a worktree. For each selected action, run a quick grep in `main/` to check if the target symbol/file still exists. Mark any already-resolved items as `[x]` in `ACTIONS.md` with a note, and drop them from the cleanup bundle. Report what was dropped to the user.
+4. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
+5. For each selected feature, create a git worktree and install dependencies:
    ```bash
    cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
    npm install --prefix ../feat-<slug>
    ```
-7. Create a session postmortem directory: `postmortems/<timestamp>/`
+6. Create a session postmortem directory: `postmortems/<timestamp>/`
 
 ### Phase 1.5: Fast-Track Check
 
