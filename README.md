@@ -2,19 +2,22 @@
 
 Orchestration workspace for coordinating parallel agent development on [Orchestra](https://github.com/devinrosen/orchestra), a desktop music library manager and device sync tool built with Tauri v2 (Rust + Svelte 5).
 
+## Requirements
+
+- [Claude Code](https://claude.ai/code) — this workspace is driven by Claude Code skills and agent teams
+- [Agent teams](https://code.claude.com/docs/en/agent-teams) enabled — experimental and off by default. Add to your `settings.json`:
+
+  ```json
+  {
+    "env": {
+      "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    }
+  }
+  ```
+
 ## Getting Started
 
-1. Clone this repo and run `/init` to clone the [Orchestra](https://github.com/devinrosen/orchestra) repo into `main/` and install dependencies.
-
-2. Enable [agent teams](https://code.claude.com/docs/en/agent-teams) in Claude Code — they are experimental and off by default. Add this to your `settings.json`:
-
-   ```json
-   {
-     "env": {
-       "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
-     }
-   }
-   ```
+Clone this repo and run `/init` in Claude Code to clone the [Orchestra](https://github.com/devinrosen/orchestra) repo into `main/` and install dependencies.
 
 ## Workflow
 
