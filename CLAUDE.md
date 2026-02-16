@@ -31,11 +31,20 @@ When adding new automation, default to a script. Only use an AI workflow when th
 
 ## Subagent Agents
 
-Defined in `.claude/agents/`. The lead spawns these via the `Task` tool at the appropriate workflow step.
+### Orchestration level (`.claude/agents/`)
 
-- **`rust-backend`** — Rust implementation subagent for `src-tauri/`. Knows all Tauri conventions (error handling, `track_from_row`, command registration, safe writes). Runs `cargo test` + `cargo clippy` before reporting done.
+The lead spawns these via the `Task` tool at the appropriate workflow step.
+
 - **`code-reviewer`** — Pre-merge review subagent. Runs `git diff main...HEAD`, evaluates correctness/security/architecture fit, writes `REVIEW.md` with APPROVE or REQUEST_CHANGES.
 - **`error-detective`** — Diagnostic subagent for failing builds or tests. Reproduces the failure, traces root cause through the diff, applies a minimal fix, and verifies.
+
+### Project level (`main/.claude/agents/`)
+
+Available in the main repo and all worktrees. The lead or implementation subagents can spawn these.
+
+- **`rust-backend`** — Rust implementation subagent for `src-tauri/`. Knows all Tauri conventions (error handling, `track_from_row`, command registration, safe writes). Runs `cargo test` + `cargo clippy` before reporting done.
+- **`svelte-frontend`** — Svelte 5 frontend implementation subagent for `src/`. Knows rune-based reactivity, CSS custom property rules, IPC invoke pattern, and e2e mock requirements. Runs `npm run check` before reporting done.
+- **`perf-profiler`** — Performance diagnosis subagent. Profiles sync pipeline, SQLite queries, and frontend rendering. Measures before/after and recommends minimal fixes.
 
 ## Subagent Workflow
 
@@ -61,8 +70,8 @@ Use the script from this workspace root:
 
 Plans include a `Layer` field (`backend-only`, `frontend-only`, `cross-layer`, `full-stack`) that determines which subagents to spawn:
 - **Backend-only**: `rust-backend` agent (works in `src-tauri/`, runs `cargo test` + `cargo clippy`)
-- **Frontend-only**: Svelte subagent (works in `src/`, runs `npm run check`)
-- **Cross-layer**: `rust-backend` agent first, then Svelte subagent (sequential)
+- **Frontend-only**: `svelte-frontend` agent (works in `src/`, runs `npm run check`)
+- **Cross-layer**: `rust-backend` agent first, then `svelte-frontend` agent (sequential)
 - **Full-stack**: single subagent handling both layers
 
 If an implementation subagent fails tests it can't resolve, spawn an `error-detective` agent in the same worktree with the failure details.
