@@ -104,36 +104,33 @@ All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet
 **Rust subagent prompt:**
 - Read `CLAUDE.md` and the **Backend** section of PLAN.md
 - Work in `src-tauri/` directory
-- Run `cargo test` before committing
-- Stage specific files by name — never `git add -A` or `git add .`
-- Commit with a clear message on the current branch
+- Run `cargo test` and `cargo clippy -- -D warnings` before reporting done
+- Do NOT commit or push — the lead handles that
 
 **Svelte subagent prompt:**
 - Read `CLAUDE.md` and the **Frontend** section of PLAN.md
 - Work in `src/` directory
-- Run `npm run check` before committing
-- Stage specific files by name — never `git add -A` or `git add .`
-- Commit with a clear message on the current branch
+- Run `npm run check` before reporting done
+- Do NOT commit or push — the lead handles that
 
 **Full-stack subagent prompt:**
 - Read `CLAUDE.md` and all of PLAN.md
-- Run both `cargo test` (from src-tauri/) and `npm run check` before committing
-- Stage specific files by name — never `git add -A` or `git add .`
-- Commit with a clear message on the current branch
+- Run both `cargo test` (from src-tauri/) and `npm run check` before reporting done
+- Do NOT commit or push — the lead handles that
 
 **All implementation subagents must also:**
 - Follow the plan strictly
 - Mark the feature as `[implemented]` in `docs/FEATURES.md` (change `- [ ]` to `- [implemented]`) if it matches an entry. Do NOT mark as `[done]`
-- Push the branch: `./scripts/push-branch.sh <worktree-path>`
 - End with a brief report: what worked, what was confusing or missing, any codebase surprises
 
-**On implementer completion:**
+**On implementer completion (lead steps):**
 1. Review the results (check test output, read the diff)
-2. Create a draft PR (pushes branch, reads PLAN.md for body, creates draft PR):
+2. Stage specific files by name (never `git add -A` or `git add .`), commit with a clear message on the feature branch
+3. Create a draft PR (pushes branch, reads PLAN.md for body, creates draft PR):
    ```bash
    ./scripts/create-draft-pr.sh <worktree-path> "<feature name>"
    ```
-3. Move to the next approved plan
+4. Move to the next approved plan
 
 ### Phase 4: Wrap-Up
 

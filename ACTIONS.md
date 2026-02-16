@@ -274,7 +274,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-16T08-13/session.md`
   - Category: `workflow`
 
-- [ ] **Make commit/push a lead responsibility instead of relying on agents** — In the 2026-02-16T08-13 session, 2 of 3 implementation agents couldn't run `git commit` or `push-branch.sh` due to sandbox permissions, requiring manual lead intervention. Rather than trying to fix agent sandbox permissions, update the `/implement-features` skill to make commit and push explicit lead steps after each agent completes implementation. Remove commit/push instructions from agent spawn prompts.
+- [x] **Make commit/push a lead responsibility instead of relying on agents** — In the 2026-02-16T08-13 session, 2 of 3 implementation agents couldn't run `git commit` or `push-branch.sh` due to sandbox permissions, requiring manual lead intervention. Rather than trying to fix agent sandbox permissions, update the `/implement-features` skill to make commit and push explicit lead steps after each agent completes implementation. Remove commit/push instructions from agent spawn prompts.
   - Source: `postmortems/2026-02-16T08-13/session.md`
   - Category: `workflow`
 
