@@ -269,6 +269,14 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T20-13/lead.md`
   - Category: `documentation`
 
+- [ ] **Instruct implementation agents to commit incrementally after each logical unit** — The multi-library backend agent wrote all code but hit a rate limit before running `cargo test` or `git commit`, requiring manual lead intervention for those steps. Agent spawn prompts should instruct agents to run tests and commit after each logical unit of work (e.g., after backend code, after frontend code) rather than batching all commits at the end. This prevents loss of work when rate limits or context exhaustion occur mid-session.
+  - Source: `postmortems/2026-02-15T08-02/session.md`
+  - Category: `workflow`
+
+- [ ] **Document `libraryStore.libraryRoot` nullability in `main/CLAUDE.md`** — `libraryStore.libraryRoot` can be `null`/`undefined` even when `libraryStore.tree` is populated. The import music frontend agent had to add a conditional guard for this. Document in `main/CLAUDE.md` conventions to prevent future agents from assuming `libraryRoot` is always set when the library is loaded.
+  - Source: `postmortems/2026-02-15T21-57/session.md`
+  - Category: `documentation`
+
 ## Processed Postmortems
 
 _Postmortem files that have already been reviewed. Do not reprocess these._
@@ -331,3 +339,6 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-14T20-13/user-favorites.md`
 - `postmortems/2026-02-14T21-16/fast-track-cleanup.md`
 - `postmortems/2026-02-14T21-16/lead.md`
+- `postmortems/2026-02-15T08-02/session.md`
+- `postmortems/2026-02-15T21-57/session.md`
+- `postmortems/2026-02-16T07-45/session.md`
