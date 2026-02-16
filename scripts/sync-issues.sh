@@ -20,20 +20,20 @@ cd "$MAIN_DIR"
 echo "Fetching open issues..."
 NUMBERS=$(gh issue list --state open --limit 200 --json number --jq '.[].number')
 
-if [[ -z "$NUMBERS" ]]; then
-  echo "No open issues found."
-  exit 0
-fi
-
 # Clear stale issue files — remove any that no longer correspond to an open issue
 for existing in "$ISSUES_DIR"/*.md; do
   [[ -e "$existing" ]] || continue
   num="$(basename "$existing" .md)"
-  if ! echo "$NUMBERS" | grep -qx "$num"; then
+  if [[ -z "$NUMBERS" ]] || ! echo "$NUMBERS" | grep -qx "$num"; then
     echo "Removing closed/stale issue: $existing"
     rm "$existing"
   fi
 done
+
+if [[ -z "$NUMBERS" ]]; then
+  echo "No open issues found."
+  exit 0
+fi
 
 for NUM in $NUMBERS; do
   echo "Fetching issue #$NUM..."
