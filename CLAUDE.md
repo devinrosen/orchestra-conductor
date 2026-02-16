@@ -9,17 +9,36 @@ This is the orchestration workspace for the Orchestra app. It contains:
 
 See `main/CLAUDE.md` for full app architecture, build commands, and conventions.
 
+## Scripts vs AI Workflows
+
+Repeatable, deterministic operations live in `scripts/` as bash scripts. AI orchestration is reserved for steps that require judgment — selecting work, researching the codebase, writing plans, reviewing code, and synthesizing feedback.
+
+**Scripts** (`scripts/`): Run directly from the shell. No AI needed.
+- `init.sh` — clone repo and install deps
+- `create-worktree.sh <slug>` — create a worktree and branch
+- `delete-worktree.sh <slug>` — remove a worktree and branch
+- `push-branch.sh <worktree-path>` — push a branch to origin
+- `create-draft-pr.sh <worktree-path>` — push and open a draft PR
+- `init-session.sh` — create a timestamped session directory in `postmortems/`
+- `sync-issues.sh` — fetch open GitHub issues into `issues/`
+
+**AI workflows**: Driven by the lead agent following the instructions below. These require codebase research, user interaction, and judgment calls that can't be scripted.
+- Feature implementation (planning + domain-aware subagents)
+- Merging (conflict resolution, FEATURES.md updates, manual commit review)
+- Postmortem review (extracting and classifying actions from free-text reports)
+
+When adding new automation, default to a script. Only use an AI workflow when the task genuinely requires reading code, making decisions, or interacting with the user.
+
 ## Subagent Workflow
 
 This workspace uses subagents (not agent teams) for parallel development. The lead runs from this directory and orchestrates subagents working in isolated git worktrees.
 
 ### Creating worktrees
 
-From this workspace root:
+Use the script from this workspace root:
 
 ```bash
-cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
-npm install --prefix ../feat-<slug>
+./scripts/create-worktree.sh <slug>
 ```
 
 ### Planning phase (parallel subagents)
@@ -40,14 +59,12 @@ Plans include a `Layer` field (`backend-only`, `frontend-only`, `cross-layer`, `
 
 ### Merging
 
-Use `/merge-feature <slug>` to merge, clean up worktrees/branches, and update FEATURES.md.
+The lead agent handles merging: merge the branch into `main`, mark the feature as `[done]` in `FEATURES.md`, check for manual commits, and clean up using `./scripts/delete-worktree.sh <slug>`.
 
 ## Postmortem Review
 
-Session postmortems collect in `postmortems/`. Use `/review-postmortems` to extract actionable items.
-
-The skill reads unprocessed postmortems, extracts actions, classifies them as **orchestration** (workflow/skill/process changes) or **project** (code/docs/test changes in `main/`), and appends them to `ACTIONS.md`.
+Session postmortems collect in `postmortems/` (use `./scripts/init-session.sh` to create a new session directory). The lead agent reviews unprocessed postmortems, extracts actions, classifies them as **orchestration** (workflow/process changes) or **project** (code/docs/test changes in `main/`), and appends them to `ACTIONS.md`.
 
 - `ACTIONS.md` — the living backlog of extracted actions, organized by scope
-- Run the agent after each session or before starting a new planning phase
+- Run postmortem review after each session or before starting a new planning phase
 - Actions flagged by multiple postmortems are high priority
