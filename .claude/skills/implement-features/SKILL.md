@@ -126,11 +126,13 @@ All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet
 **On implementer completion (lead steps):**
 1. Review the results (check test output, read the diff)
 2. Stage specific files by name (never `git add -A` or `git add .`), commit with a clear message on the feature branch
-3. Create a draft PR (pushes branch, reads PLAN.md for body, creates draft PR):
+3. **For cross-layer features**: commit after **each** agent completes (backend commit, then spawn frontend, then frontend commit). Do not batch both layers into one commit.
+4. **If an agent fails mid-work** (rate limit, context exhaustion): check the worktree for uncommitted changes (`git status`). If there are usable changes, run tests, commit what works, then spawn a new agent to finish the remaining work.
+5. Create a draft PR (pushes branch, reads PLAN.md for body, creates draft PR):
    ```bash
    ./scripts/create-draft-pr.sh <worktree-path> "<feature name>"
    ```
-4. Move to the next approved plan
+6. Move to the next approved plan
 
 ### Phase 4: Wrap-Up
 

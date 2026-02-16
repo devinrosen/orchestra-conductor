@@ -269,7 +269,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T20-13/lead.md`
   - Category: `documentation`
 
-- [ ] **Instruct implementation agents to commit incrementally after each logical unit** — The multi-library backend agent wrote all code but hit a rate limit before running `cargo test` or `git commit`, requiring manual lead intervention for those steps. Agent spawn prompts should instruct agents to run tests and commit after each logical unit of work (e.g., after backend code, after frontend code) rather than batching all commits at the end. This prevents loss of work when rate limits or context exhaustion occur mid-session.
+- [x] **Instruct implementation agents to commit incrementally after each logical unit** — The multi-library backend agent wrote all code but hit a rate limit before running `cargo test` or `git commit`, requiring manual lead intervention for those steps. Agent spawn prompts should instruct agents to run tests and commit after each logical unit of work (e.g., after backend code, after frontend code) rather than batching all commits at the end. This prevents loss of work when rate limits or context exhaustion occur mid-session.
   - Source: `postmortems/2026-02-15T08-02/session.md`
   - Source: `postmortems/2026-02-16T08-13/session.md`
   - Category: `workflow`
