@@ -271,9 +271,14 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
 
 - [ ] **Instruct implementation agents to commit incrementally after each logical unit** — The multi-library backend agent wrote all code but hit a rate limit before running `cargo test` or `git commit`, requiring manual lead intervention for those steps. Agent spawn prompts should instruct agents to run tests and commit after each logical unit of work (e.g., after backend code, after frontend code) rather than batching all commits at the end. This prevents loss of work when rate limits or context exhaustion occur mid-session.
   - Source: `postmortems/2026-02-15T08-02/session.md`
+  - Source: `postmortems/2026-02-16T08-13/session.md`
   - Category: `workflow`
 
-- [ ] **Document `libraryStore.libraryRoot` nullability in `main/CLAUDE.md`** — `libraryStore.libraryRoot` can be `null`/`undefined` even when `libraryStore.tree` is populated. The import music frontend agent had to add a conditional guard for this. Document in `main/CLAUDE.md` conventions to prevent future agents from assuming `libraryRoot` is always set when the library is loaded.
+- [ ] **Make commit/push a lead responsibility instead of relying on agents** — In the 2026-02-16T08-13 session, 2 of 3 implementation agents couldn't run `git commit` or `push-branch.sh` due to sandbox permissions, requiring manual lead intervention. Rather than trying to fix agent sandbox permissions, update the `/implement-features` skill to make commit and push explicit lead steps after each agent completes implementation. Remove commit/push instructions from agent spawn prompts.
+  - Source: `postmortems/2026-02-16T08-13/session.md`
+  - Category: `workflow`
+
+- [x] **Document `libraryStore.libraryRoot` nullability in `main/CLAUDE.md`** — `libraryStore.libraryRoot` can be `null`/`undefined` even when `libraryStore.tree` is populated. The import music frontend agent had to add a conditional guard for this. Document in `main/CLAUDE.md` conventions to prevent future agents from assuming `libraryRoot` is always set when the library is loaded.
   - Source: `postmortems/2026-02-15T21-57/session.md`
   - Category: `documentation`
 
@@ -342,3 +347,4 @@ _Postmortem files that have already been reviewed. Do not reprocess these._
 - `postmortems/2026-02-15T08-02/session.md`
 - `postmortems/2026-02-15T21-57/session.md`
 - `postmortems/2026-02-16T07-45/session.md`
+- `postmortems/2026-02-16T08-13/session.md`
