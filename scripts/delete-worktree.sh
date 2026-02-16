@@ -39,6 +39,9 @@ echo "Removing worktree at $WORKTREE_DIR..."
 cd "$MAIN_DIR"
 git worktree remove "$WORKTREE_DIR"
 
+echo "Pruning stale worktree references..."
+git worktree prune
+
 echo "Deleting branch $BRANCH..."
 git branch -D "$BRANCH"
 
