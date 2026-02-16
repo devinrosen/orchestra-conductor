@@ -29,6 +29,14 @@ Repeatable, deterministic operations live in `scripts/` as bash scripts. AI orch
 
 When adding new automation, default to a script. Only use an AI workflow when the task genuinely requires reading code, making decisions, or interacting with the user.
 
+## Subagent Agents
+
+Defined in `.claude/agents/`. The lead spawns these via the `Task` tool at the appropriate workflow step.
+
+- **`rust-backend`** — Rust implementation subagent for `src-tauri/`. Knows all Tauri conventions (error handling, `track_from_row`, command registration, safe writes). Runs `cargo test` + `cargo clippy` before reporting done.
+- **`code-reviewer`** — Pre-merge review subagent. Runs `git diff main...HEAD`, evaluates correctness/security/architecture fit, writes `REVIEW.md` with APPROVE or REQUEST_CHANGES.
+- **`error-detective`** — Diagnostic subagent for failing builds or tests. Reproduces the failure, traces root cause through the diff, applies a minimal fix, and verifies.
+
 ## Subagent Workflow
 
 This workspace uses subagents (not agent teams) for parallel development. The lead runs from this directory and orchestrates subagents working in isolated git worktrees.
@@ -52,14 +60,19 @@ Use the script from this workspace root:
 ### Implementation phase (domain-aware subagents)
 
 Plans include a `Layer` field (`backend-only`, `frontend-only`, `cross-layer`, `full-stack`) that determines which subagents to spawn:
-- **Backend-only**: Rust subagent (works in `src-tauri/`, runs `cargo test`)
+- **Backend-only**: `rust-backend` agent (works in `src-tauri/`, runs `cargo test` + `cargo clippy`)
 - **Frontend-only**: Svelte subagent (works in `src/`, runs `npm run check`)
-- **Cross-layer**: Rust subagent first, then Svelte subagent (sequential)
+- **Cross-layer**: `rust-backend` agent first, then Svelte subagent (sequential)
 - **Full-stack**: single subagent handling both layers
+
+If an implementation subagent fails tests it can't resolve, spawn an `error-detective` agent in the same worktree with the failure details.
 
 ### Merging
 
-The lead agent handles merging: merge the branch into `main`, mark the feature as `[done]` in `FEATURES.md`, check for manual commits, and clean up using `./scripts/delete-worktree.sh <slug>`.
+1. Spawn a `code-reviewer` agent on the worktree to produce `REVIEW.md`
+2. If verdict is REQUEST_CHANGES, fix the issues (or spawn `error-detective`) before proceeding
+3. Merge the branch into `main`, mark the feature as `[done]` in `FEATURES.md`
+4. Check for manual commits, then clean up using `./scripts/delete-worktree.sh <slug>`
 
 ## Postmortem Review
 
