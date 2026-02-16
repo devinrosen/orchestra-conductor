@@ -24,10 +24,9 @@ If there are no unprocessed postmortems, report that and stop.
 ### Step 2: Review each unprocessed postmortem
 
 For each unprocessed postmortem, read the full file and extract actionable items from these sections:
-- "What Went Wrong"
-- "What Can Be Improved"
-- "Suggestions"
-- "Codebase Surprises" (if they imply something should change)
+- "What Went Wrong" — errors, blockers, friction points
+- "Suggestions" — concrete improvements proposed by agents
+- "Agent Feedback" (legacy format) — scan for issues, codebase surprises, or improvement ideas
 
 **What counts as actionable:**
 - Specific changes to files, configs, docs, or workflows

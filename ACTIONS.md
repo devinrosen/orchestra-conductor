@@ -146,7 +146,7 @@ _Changes to the orchestration workspace: workflows, skills, agents, team process
   - Source: `postmortems/2026-02-14T19-36/lead.md`
   - Category: `skill-update`
 
-- [ ] **Note in agent instructions that PLAN.md is gitignored** — PLAN.md is in `.gitignore`, so `git add PLAN.md` will fail silently or error. Agent spawn prompts or the `/implement-features` skill should mention that PLAN.md is for the agent's own reference only and won't be committed. This avoids a failed first commit attempt when agents try to include it.
+- [x] **Note in agent instructions that PLAN.md is gitignored** — PLAN.md is in `.gitignore`, so `git add PLAN.md` will fail silently or error. Agent spawn prompts or the `/implement-features` skill should mention that PLAN.md is for the agent's own reference only and won't be committed. This avoids a failed first commit attempt when agents try to include it.
   - Source: `postmortems/2026-02-14T21-16/fast-track-cleanup.md`
   - Source: `postmortems/2026-02-14T21-16/lead.md`
   - Category: `workflow`
@@ -264,7 +264,7 @@ _Changes to the app codebase in `main/`: code, docs, tests, features._
   - Source: `postmortems/2026-02-14T19-36/planner-track-ratings.md`
   - Category: `documentation`
 
-- [ ] **Add "Patterns to Follow" section to `main/CLAUDE.md`** — Document the `model → repo → command → store → page` pipeline as the standard extension pattern for new features. The planner noted this is the main pattern agents follow, and having it explicitly documented would save research time for future planners.
+- [x] **Add "Patterns to Follow" section to `main/CLAUDE.md`** — Document the `model → repo → command → store → page` pipeline as the standard extension pattern for new features. The planner noted this is the main pattern agents follow, and having it explicitly documented would save research time for future planners.
   - Source: `postmortems/2026-02-14T20-13/planner-favorites.md`
   - Source: `postmortems/2026-02-14T20-13/lead.md`
   - Category: `documentation`

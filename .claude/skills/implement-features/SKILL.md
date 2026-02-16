@@ -138,9 +138,11 @@ All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet
 ### Phase 4: Wrap-Up
 
 1. Check `ACTIONS.md` for any items resolved by this session's work. Mark them `[x]`.
-2. Write ONE session postmortem to `postmortems/<timestamp>/session.md` synthesizing all subagent completion reports. Include:
+2. Write ONE session postmortem to `postmortems/<timestamp>/session.md` synthesizing all subagent completion reports. Use these exact section headings (they are parsed by `/review-postmortems`):
    - **Goal**: What the session was trying to accomplish
    - **Results**: Table of features, branches, commits, test results, PR links
-   - **Agent Feedback**: Key themes from subagent reports (issues, codebase surprises, suggestions)
+   - **What Worked**: Patterns, tools, or approaches that went smoothly
+   - **What Went Wrong**: Errors, blockers, friction points, wasted effort (omit if nothing went wrong)
+   - **Suggestions**: Concrete improvements to workflow, agents, docs, or codebase (omit if none)
 3. Present a final summary table to the user with branches, commits, test results, and PR links
 4. Remind the user they can merge with `/merge-feature <branch>`
