@@ -26,13 +26,14 @@ Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
    - **One question per FEATURES.md section** with available features. Each option label is the feature name, description is a one-line summary. Group sections into calls of up to 4 questions each. Skip sections with no available features.
    - **Separate call for project actions**: Multi-select of pending project actions (if any exist). Each option label is the action name, description is a one-line summary. Include a "None" option.
 3. **Pre-check cleanup items** — If the user chose to bundle cleanup actions, verify each one is still relevant before creating a worktree. For each selected action, run a quick grep in `main/` to check if the target symbol/file still exists. Mark any already-resolved items as `[x]` in `ACTIONS.md` with a note, and drop them from the cleanup bundle. Report what was dropped to the user.
-4. Generate a session timestamp: `YYYY-MM-DDTHH-MM` (e.g., `2026-02-13T15-04`)
+4. Initialize the session (creates timestamped postmortem directory, prints timestamp):
+   ```bash
+   ./scripts/init-session.sh
+   ```
 5. For each selected feature, create a git worktree and install dependencies:
    ```bash
-   cd main && git branch feat/<slug> main && git worktree add ../feat-<slug> feat/<slug>
-   npm install --prefix ../feat-<slug>
+   ./scripts/create-worktree.sh <slug>
    ```
-6. Create a session postmortem directory: `postmortems/<timestamp>/`
 
 ### Phase 1.5: Fast-Track Check
 
@@ -123,14 +124,14 @@ All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet
 **All implementation subagents must also:**
 - Follow the plan strictly
 - Mark the feature as `[implemented]` in `docs/FEATURES.md` (change `- [ ]` to `- [implemented]`) if it matches an entry. Do NOT mark as `[done]`
-- Push the branch: `git push -u origin <branch>`
+- Push the branch: `./scripts/push-branch.sh <worktree-path>`
 - End with a brief report: what worked, what was confusing or missing, any codebase surprises
 
 **On implementer completion:**
 1. Review the results (check test output, read the diff)
-2. Create a draft PR from `main/`:
+2. Create a draft PR (pushes branch, reads PLAN.md for body, creates draft PR):
    ```bash
-   gh pr create --draft --title "<feature name>" --body "<plan summary + test results>"
+   ./scripts/create-draft-pr.sh <worktree-path> "<feature name>"
    ```
 3. Move to the next approved plan
 
