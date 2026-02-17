@@ -53,9 +53,40 @@ Evaluate **each worktree independently** for fast-track eligibility. A session c
 2. Agent writes a brief PLAN.md, implements immediately, runs tests, and commits
 3. Lead reviews the commit diff (not a separate plan review step)
 
-Standard worktrees proceed through Phase 2 and Phase 3 as normal. Fast-track subagents run in parallel with planning subagents.
+Standard worktrees proceed through Phase 2, Phase 3, and Phase 4 as normal. Fast-track subagents run in parallel with specification work.
 
-### Phase 2: Planning (parallel subagents)
+### Phase 2: Specification (collaborative, lead + user)
+
+For each **standard** (non-fast-track) feature, the lead writes a SPEC.md through interactive collaboration with the user. This separates "what to build" from "how to build it" — the planner only handles the latter.
+
+**For each feature:**
+
+1. **Impact analysis** — The lead greps the codebase to answer:
+   - Which files/modules are affected by this feature?
+   - What data model changes are needed? (If adding a field, grep for ALL files that construct/query that model.)
+   - What existing patterns apply? (Name specific files as templates.)
+   - What UI elements exist near where new elements will appear? (Check for nesting constraints.)
+
+2. **Draft SPEC.md** — Write the spec to the worktree with these sections:
+   - **Behavior**: Concrete user-facing scenarios (what the user sees and does, step by step)
+   - **Data Model Changes**: Exact fields/tables added or modified, plus a grep-verified impact list of every file that must be updated. `"None."` if no model changes.
+   - **UI Description**: Where new elements appear relative to existing ones, what HTML elements to use (flag nesting constraints), layout details. `"None."` for backend-only features.
+   - **Scope Boundaries**: What this feature explicitly does NOT do (prevents planner over-specification)
+   - **Acceptance Criteria**: Checkable statements as a markdown checklist (tests, warnings, behavior verification)
+
+3. **Present to user** — Show the drafted SPEC.md to the user for review.
+
+4. **Refine** — User corrects behavior, adjusts scope, adds edge cases. Lead updates SPEC.md accordingly. Repeat until the user approves.
+
+**Spec quality rules:**
+- Every data model change must include a grep-verified file list (not "update all N locations" — list them explicitly)
+- UI descriptions must specify the HTML element type and its parent context (to catch nesting issues like `<button>` inside `<button>`)
+- Scope boundaries must include at least 2 "does NOT" items to force explicit scoping
+- Acceptance criteria must include `cargo test` / `npm run check` pass conditions
+
+**Parallelism:** The lead writes specs sequentially (since each requires user interaction), but fast-track subagents run in parallel during this phase.
+
+### Phase 3: Planning (parallel subagents)
 
 Spawn one `general-purpose` subagent per feature using the `Task` tool, **all in parallel** with `run_in_background: true` and `model: "sonnet"`.
 
@@ -63,14 +94,17 @@ Each planner subagent's prompt must include:
 - Their worktree path
 - The feature description from FEATURES.md
 - Instruction to read `CLAUDE.md` in their worktree for project context
+- Instruction to read `SPEC.md` for the feature specification — **the spec defines what to build; the planner's job is to produce a technical plan for how to build it**
 - Instruction to **only research and write PLAN.md** — no implementation
 - PLAN.md required sections:
   - **Scope**: `S` (single-file, no arch decisions), `M` (2-5 files, some design choices), or `L` (6+ files, architectural decisions)
   - **Layer**: `backend-only`, `frontend-only`, `cross-layer`, or `full-stack`. For `cross-layer`, split into `## Backend`, `## Frontend`, and `## Shared Interface` (with exact Tauri command signatures)
   - **Dead Code**: functions that become unused (table for cleanup tasks: function, file, reason). `"None."` for S-scope if empty
-  - **Test Cases**: exact test scenarios for new functions/commands
+  - **Test Cases**: exact test scenarios for new functions/commands (must cover all acceptance criteria from SPEC.md)
   - **Known Risks / Blockers**: technical uncertainties, external dependencies. `"None identified."` for S-scope if empty
 - Plan quality rules:
+  - The plan must satisfy every acceptance criterion in SPEC.md — flag any that seem infeasible
+  - The plan must touch every file listed in SPEC.md's impact list — flag any the planner believes are unnecessary
   - Reference existing patterns by name for each new component (e.g., "model: follow `profile.rs`, store: follow `profilesStore`")
   - For uncertain fixes, use **"try A; if that doesn't work, fallback to B"** format
   - Be concise — cap reasoning sections at ~20 lines
@@ -78,17 +112,16 @@ Each planner subagent's prompt must include:
   - New types/structs must note which are actually consumed vs. speculative
   - Bulk replacements must include a verification grep step
   - New conventions must include a **Fix Existing Violations** section
-  - New model fields must grep for ALL files that construct/map the model (include the grep command)
   - New interactive elements near existing ones must flag HTML nesting constraints
   - TypeScript typed arrays / browser APIs must note explicit generic types
-- End with a brief report: what worked, what was confusing or missing, any codebase surprises
+- End with a brief report: what worked, what was confusing or missing, any codebase surprises, and any SPEC.md items that need revision
 
 **On planner completion:**
 1. Read the PLAN.md from their worktree (verify it exists on disk)
-2. Review the plan against the codebase (spot-check key files mentioned)
+2. Review the plan against SPEC.md (verify all acceptance criteria are covered, all impact files are addressed)
 3. Present the plan to the user for approval
 
-### Phase 3: Implementation (sequential domain-aware subagents)
+### Phase 4: Implementation (sequential domain-aware subagents)
 
 For each approved plan, read the `## Layer` field and spawn subagents accordingly:
 
@@ -102,19 +135,19 @@ For each approved plan, read the `## Layer` field and spawn subagents accordingl
 All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet"`.
 
 **Rust subagent prompt:**
-- Read `CLAUDE.md` and the **Backend** section of PLAN.md
+- Read `CLAUDE.md`, `SPEC.md`, and the **Backend** section of PLAN.md
 - Work in `src-tauri/` directory
 - Run `cargo test` and `cargo clippy -- -D warnings` before reporting done
 - Do NOT commit or push — the lead handles that
 
 **Svelte subagent prompt:**
-- Read `CLAUDE.md` and the **Frontend** section of PLAN.md
+- Read `CLAUDE.md`, `SPEC.md`, and the **Frontend** section of PLAN.md
 - Work in `src/` directory
 - Run `npm run check` before reporting done
 - Do NOT commit or push — the lead handles that
 
 **Full-stack subagent prompt:**
-- Read `CLAUDE.md` and all of PLAN.md
+- Read `CLAUDE.md`, `SPEC.md`, and all of PLAN.md
 - Run both `cargo test` (from src-tauri/) and `npm run check` before reporting done
 - Do NOT commit or push — the lead handles that
 
@@ -128,13 +161,13 @@ All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet
 2. Stage specific files by name (never `git add -A` or `git add .`), commit with a clear message on the feature branch
 3. **For cross-layer features**: commit after **each** agent completes (backend commit, then spawn frontend, then frontend commit). Do not batch both layers into one commit.
 4. **If an agent fails mid-work** (rate limit, context exhaustion): check the worktree for uncommitted changes (`git status`). If there are usable changes, run tests, commit what works, then spawn a new agent to finish the remaining work.
-5. Create a draft PR (pushes branch, reads PLAN.md for body, creates draft PR):
+5. Create a draft PR (pushes branch, reads SPEC.md + PLAN.md for body, creates draft PR):
    ```bash
    ./scripts/create-draft-pr.sh <worktree-path> "<feature name>"
    ```
 6. Move to the next approved plan
 
-### Phase 4: Wrap-Up
+### Phase 5: Wrap-Up
 
 1. Check `ACTIONS.md` for any items resolved by this session's work. Mark them `[x]`.
 2. Write ONE session postmortem to `postmortems/<timestamp>/session.md` synthesizing all subagent completion reports. Use these exact section headings (they are parsed by `/review-postmortems`):
