@@ -7,12 +7,12 @@ When the specification is excellent, the implementation is excellent. When featu
 The current pipeline is:
 
 ```
-FEATURES.md (1-2 sentences) → Planner (researches + designs) → Implementer (builds)
+GitHub issue (1-2 sentences) → Planner (researches + designs) → Implementer (builds)
 ```
 
 The planner is doing two jobs simultaneously: **figuring out what to build** (specification) and **figuring out how to build it** (technical plan). When the "what" is vague, the "how" suffers. Concrete examples from past sessions:
 
-- **Track ratings**: FEATURES.md said "1-5 star rating." Planner missed 3 locations needing the `rating` field (playlist_repo.rs, scanner/metadata.rs) because the spec never said "adding a field to Track touches every file that constructs a Track." Planner also put `<button>` stars inside an existing `<button>` row — the spec never described where ratings appear relative to existing UI.
+- **Track ratings**: The issue said "1-5 star rating." Planner missed 3 locations needing the `rating` field (playlist_repo.rs, scanner/metadata.rs) because the spec never said "adding a field to Track touches every file that constructs a Track." Planner also put `<button>` stars inside an existing `<button>` row — the spec never described where ratings appear relative to existing UI.
 - **Multi-library**: Planner missed `Favorites.svelte` as a location that reads `libraryRoot`. The spec never enumerated which pages/stores depend on the single-root assumption.
 - **PlaylistTrack struct**: Plan defined a type that was never consumed. The spec never clarified whether playlists work with full Track objects or just IDs.
 - **state_referenced_locally cleanup**: Planner spent 110 lines deliberating and landed on a broken approach. The spec didn't clarify the correct Svelte 5 pattern upfront.

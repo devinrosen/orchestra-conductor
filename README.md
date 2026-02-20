@@ -43,7 +43,7 @@ The user acts as lead — selecting work, reviewing plans and implementations, a
 
 Start a session by asking the agent to implement features. The agent:
 
-- Presents features from `main/docs/FEATURES.md` and pending cleanup actions from `ACTIONS.md` for you to select
+- Presents GitHub issues and pending cleanup actions from `ACTIONS.md` for you to select
 - Creates an isolated git worktree per feature via `scripts/create-worktree.sh`
 - Spawns **planning subagents** in parallel — each researches the codebase and writes a `PLAN.md`
 - Presents each plan for your approval
@@ -73,7 +73,6 @@ cd ../feat-play-queue && npm run tauri dev
 When a branch looks good, ask the agent to merge it. The agent:
 
 - Merges the branch into `main`
-- Marks the feature as `[done]` in `FEATURES.md`
 - Checks for manual commits not captured by agent postmortems and prompts you to document them
 - Cleans up the worktree and branch via `scripts/delete-worktree.sh`
 
@@ -93,5 +92,5 @@ These actions feed back into step 1 — the next session offers them alongside n
 ```
 implement features  →  review branches  →  merge  →  review postmortems
         ↑                                                      |
-        └──────────── ACTIONS.md + FEATURES.md ←───────────────┘
+        └──────────── ACTIONS.md + GitHub issues ←──────────────┘
 ```

@@ -24,7 +24,7 @@ Repeatable, deterministic operations live in `scripts/` as bash scripts. AI orch
 
 **AI workflows**: Driven by the lead agent following the instructions below. These require codebase research, user interaction, and judgment calls that can't be scripted.
 - Feature implementation (planning + domain-aware subagents)
-- Merging (conflict resolution, FEATURES.md updates, manual commit review)
+- Merging (conflict resolution, manual commit review)
 - Postmortem review (extracting and classifying actions from free-text reports)
 
 When adding new automation, default to a script. Only use an AI workflow when the task genuinely requires reading code, making decisions, or interacting with the user.
@@ -60,7 +60,7 @@ Use the script from this workspace root:
 
 ### Planning phase (parallel subagents)
 
-1. Read `main/docs/FEATURES.md` for the feature list
+1. Review GitHub issues for the feature list
 2. Create a worktree per selected feature
 3. Spawn one planning subagent per worktree in parallel (via `Task` tool with `run_in_background: true`)
 4. Each planner researches the codebase and writes `PLAN.md` with Scope, Layer, Dead Code, Test Cases, and Known Risks sections
@@ -80,7 +80,7 @@ If an implementation subagent fails tests it can't resolve, spawn an `error-dete
 
 1. Spawn a `code-reviewer` agent on the worktree to produce `REVIEW.md`
 2. If verdict is REQUEST_CHANGES, fix the issues (or spawn `error-detective`) before proceeding
-3. Merge the branch into `main`, mark the feature as `[done]` in `FEATURES.md`
+3. Merge the branch into `main`
 4. Check for manual commits, then clean up using `./scripts/delete-worktree.sh <slug>`
 
 ## Postmortem Review

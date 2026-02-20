@@ -1,6 +1,6 @@
 ---
 name: implement-features
-description: Plan and implement features using subagents with isolated git worktrees. Use when starting a new development session to build features from FEATURES.md.
+description: Plan and implement features using subagents with isolated git worktrees. Use when starting a new development session to build features from GitHub issues.
 disable-model-invocation: true
 argument-hint: [feature-names]
 ---
@@ -15,15 +15,15 @@ Plan and implement features using parallel planning subagents and domain-aware i
 /implement-features <feature1>, <feature2>, ...
 ```
 
-Features can be names from `main/docs/FEATURES.md` or freeform descriptions.
+Features can be GitHub issue titles/numbers or freeform descriptions.
 
 ## Workflow
 
 ### Phase 1: Setup
 
-1. **Gather open items** — Spawn a `haiku` subagent via `Task` tool to read `main/docs/FEATURES.md` and `ACTIONS.md`, then return only the open items (features with status `[ ]` grouped by section, unchecked actions by scope). This keeps the full files out of the lead's context. If the user passed feature names as arguments, skip straight to step 3.
-2. **Interactive feature selection** — Use `AskUserQuestion` to present multi-select menus from the subagent's results. The tool supports up to 4 questions (each with 2-4 options) per call, so organize by section:
-   - **One question per FEATURES.md section** with available features. Each option label is the feature name, description is a one-line summary. Group sections into calls of up to 4 questions each. Skip sections with no available features.
+1. **Gather open items** — Run `./scripts/sync-issues.sh` to refresh `issues/`, then spawn a `haiku` subagent via `Task` tool to read all `.md` files in `issues/` and `ACTIONS.md`, then return only the open items (GitHub issues grouped by label, unchecked actions by scope). This keeps the full files out of the lead's context. If the user passed feature names as arguments, skip straight to step 3.
+2. **Interactive feature selection** — Use `AskUserQuestion` to present multi-select menus from the subagent's results. The tool supports up to 4 questions (each with 2-4 options) per call, so organize by label/category:
+   - **One question per issue category** with available features/bugs. Each option label is the issue title, description is a one-line summary. Group categories into calls of up to 4 questions each. Skip categories with no available issues.
    - **Separate call for project actions**: Multi-select of pending project actions (if any exist). Each option label is the action name, description is a one-line summary. Include a "None" option.
 3. **Pre-check cleanup items** — If the user chose to bundle cleanup actions, verify each one is still relevant before creating a worktree. For each selected action, run a quick grep in `main/` to check if the target symbol/file still exists. Mark any already-resolved items as `[x]` in `ACTIONS.md` with a note, and drop them from the cleanup bundle. Report what was dropped to the user.
 4. Initialize the session (creates timestamped postmortem directory, prints timestamp):
@@ -92,7 +92,7 @@ Spawn one `general-purpose` subagent per feature using the `Task` tool, **all in
 
 Each planner subagent's prompt must include:
 - Their worktree path
-- The feature description from FEATURES.md
+- The feature description from the GitHub issue
 - Instruction to read `CLAUDE.md` in their worktree for project context
 - Instruction to read `SPEC.md` for the feature specification — **the spec defines what to build; the planner's job is to produce a technical plan for how to build it**
 - Instruction to **only research and write PLAN.md** — no implementation
@@ -153,7 +153,7 @@ All implementation subagents use `mode: "bypassPermissions"` and `model: "sonnet
 
 **All implementation subagents must also:**
 - Follow the plan strictly
-- Mark the feature as `[implemented]` in `docs/FEATURES.md` (change `- [ ]` to `- [implemented]`) if it matches an entry. Do NOT mark as `[done]`
+- Do NOT close GitHub issues — the lead handles that after merge
 - End with a brief report: what worked, what was confusing or missing, any codebase surprises
 
 **On implementer completion (lead steps):**
